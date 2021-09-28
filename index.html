@@ -21,9 +21,9 @@
   </script>
 
   <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="總有一天會用到的誤導向筆記">
 <meta property="og:url" content="https://rurutoria7.github.io/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="總有一天會用到的誤導向筆記">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
@@ -41,7 +41,7 @@
   };
 </script>
 
-  <title>Hexo</title>
+  <title>總有一天會用到的誤導向筆記</title>
   
 
 
@@ -92,9 +92,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
+      <h1 class="site-title">總有一天會用到的誤導向筆記</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
+      <p class="site-subtitle" itemprop="description">記性很差，學過就忘；智商低落，囫圇吞棗。筆者相信寫部落格可以減緩上述疑難雜症。</p>
   </div>
 
   <div class="site-nav-right">
@@ -164,7 +165,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="總有一天會用到的誤導向筆記">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -180,7 +181,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-09-28 10:32:34 / Modified: 10:48:00" itemprop="dateCreated datePublished" datetime="2021-09-28T10:32:34+08:00">2021-09-28</time>
+              <time title="Created: 2021-09-28 10:32:34 / Modified: 11:19:05" itemprop="dateCreated datePublished" datetime="2021-09-28T10:32:34+08:00">2021-09-28</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -229,7 +230,7 @@
 <p>dfs 進去時紀錄 <span class="math inline">\(tin[u] = ++time\)</span>，出來時紀錄 <span class="math inline">\(tout[u] = ++time\)</span>。因為一定子樹走完才會出來，因此子樹一定被 <span class="math inline">\(tin[u]\)</span> 和 <span class="math inline">\(tout[u]\)</span> 夾住。</p>
 <p>有個優化的方式，出來時不佔用另一個 <span class="math inline">\(time\)</span>，就讓多個 <span class="math inline">\(tout\)</span> 指在同一個地方，如此序列大小減半且答案不需要除以 <span class="math inline">\(2\)</span>。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> dseq[N], tin[N], tout[N], tim;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> fa, <span class="keyword">int</span> d)</span></span>&#123;</span><br><span class="line">    tin[u] = ++tim;</span><br><span class="line">    dseq[tin[u]] = d;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> v: G[u])&#123;</span><br><span class="line">        <span class="keyword">if</span> (v == fa) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="built_in">dfs</span>(v,u,d+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    tout[u] = tim;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="ac-code">AC code</h2>
+<h2 id="ac-code">AC Code</h2>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e6</span>+<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, q;</span><br><span class="line">vector&lt;<span class="keyword">int</span>&gt; G[N];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> dseq[N], tin[N], tout[N], tim;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> fa, <span class="keyword">int</span> d)</span></span>&#123;</span><br><span class="line">    tin[u] = ++tim;</span><br><span class="line">    dseq[tin[u]] = d;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> v: G[u])&#123;</span><br><span class="line">        <span class="keyword">if</span> (v == fa) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="built_in">dfs</span>(v,u,d+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    tout[u] = tim;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> root[N];</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Seg</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> tr[N&lt;&lt;<span class="number">5</span>], lc[N&lt;&lt;<span class="number">5</span>], rc[N&lt;&lt;<span class="number">5</span>], ptr;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">modify</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> i, <span class="keyword">int</span> x, <span class="keyword">int</span> l=<span class="number">1</span>, <span class="keyword">int</span> r=n)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rt = ++ptr;</span><br><span class="line">        lc[rt] = lc[u], rc[rt] = rc[u], tr[rt] = tr[u];</span><br><span class="line">        <span class="keyword">if</span> (l == r)&#123;</span><br><span class="line">            tr[rt] += x;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> m = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (i &lt;= m) lc[rt] = <span class="built_in">modify</span>(lc[u],i,x,l,m);</span><br><span class="line">            <span class="keyword">if</span> (m &lt; i)  rc[rt] = <span class="built_in">modify</span>(rc[u],i,x,m+<span class="number">1</span>,r);</span><br><span class="line">            tr[rt] = tr[lc[rt]] + tr[rc[rt]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> rt;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">query</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> ql, <span class="keyword">int</span> qr, <span class="keyword">int</span> l=<span class="number">1</span>, <span class="keyword">int</span> r=n)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (ql&lt;=l &amp;&amp; r&lt;=qr)&#123;</span><br><span class="line">            <span class="keyword">return</span> tr[u];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> m = (l+r)&gt;&gt;<span class="number">1</span>, ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (ql&lt;=m) ans += <span class="built_in">query</span>(lc[u],ql,qr,l,m);</span><br><span class="line">        <span class="keyword">if</span> (m&lt;qr) ans += <span class="built_in">query</span>(rc[u],ql,qr,m+<span class="number">1</span>,r);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; st;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    minamisan</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">2</span>,n)&#123;</span><br><span class="line">        <span class="keyword">int</span> u, v;</span><br><span class="line">        cin &gt;&gt; u &gt;&gt; v;</span><br><span class="line">        G[u].<span class="built_in">pb</span>(v);</span><br><span class="line">        G[v].<span class="built_in">pb</span>(u);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dfs</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">1</span>,n)&#123;</span><br><span class="line">        root[i] = st.<span class="built_in">modify</span>(root[i<span class="number">-1</span>],dseq[i],<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    cin &gt;&gt; q;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">1</span>,q)&#123;</span><br><span class="line">        <span class="keyword">int</span> p, k;</span><br><span class="line">        cin &gt;&gt; p &gt;&gt; k;</span><br><span class="line">        cout &lt;&lt; (st.<span class="built_in">query</span>(root[tout[p]],<span class="number">1</span>,k+dseq[tin[p]])-st.<span class="built_in">query</span>(root[tin[p]<span class="number">-1</span>],<span class="number">1</span>,k+dseq[tin[p]])) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
@@ -250,7 +251,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/28/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -259,12 +260,12 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="總有一天會用到的誤導向筆記">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/09/28/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+            <a href="/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/" class="post-title-link" itemprop="url">【題解】TOJ 638. 遞回呀遞回</a>
         </h2>
 
         <div class="post-meta">
@@ -274,7 +275,23 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2021-09-28 10:19:49" itemprop="dateCreated datePublished" datetime="2021-09-28T10:19:49+08:00">2021-09-28</time>
+              <time title="Created: 2021-09-27 15:55:45" itemprop="dateCreated datePublished" datetime="2021-09-27T15:55:45+08:00">2021-09-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-28 11:18:58" itemprop="dateModified" datetime="2021-09-28T11:18:58+08:00">2021-09-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
             </span>
 
           
@@ -288,20 +305,272 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="quick-start">Quick Start</h2>
-<h3 id="create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="run-server">Run server</h3>
+          <h2 id="題意">題意</h2>
+<p><span class="math inline">\(a, b, c, r_0, r_1, n, p\)</span> 和遞迴關係式 <span class="math inline">\(r_{i+2} = a \cdot r_{i+1} \cdot r_i + b \cdot r_{i+1} + c \cdot r_i\)</span>，求 <span class="math inline">\(r_n \mod p\)</span></p>
+<ul>
+<li><span class="math inline">\(n \le 10^{18}\)</span></li>
+<li><span class="math inline">\(p \le 10^4\)</span></li>
+</ul>
+<h2 id="觀察">觀察</h2>
+<ul>
+<li>因為有 <span class="math inline">\(r_{i+1} \cdot r_i\)</span>，不能用矩陣快速冪</li>
+<li>只會用到前兩項</li>
+<li><span class="math inline">\(p \le 10^4\)</span>，因此前兩項的可能性不超過 <span class="math inline">\(10^8\)</span> 種</li>
+</ul>
+<h2 id="作法">作法</h2>
+<p>當只要出現兩項 <span class="math inline">\({f[i-1],f[i]}\)</span> 曾經出現過，就代表接下來會循環： <span class="math inline">\(A, B, C, ..., X, ..., X, ..., X...\)</span></p>
+<p>我們紀錄第一次循環出現的位置和循環節長度，若 <span class="math inline">\(N\)</span> 在循環出現前可以直接回答，否則計算出 <span class="math inline">\(N\)</span> 在循環節中的哪個位置再回答。</p>
+<h2 id="ac-code">AC Code</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">5e7</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a, b, c, r0, r1, n, p;</span><br><span class="line"><span class="keyword">int</span> f[N];</span><br><span class="line">map&lt;pii,<span class="keyword">int</span>&gt; mp; <span class="comment">//&#123;&#123;f[i-1], f[i]&#125;, i&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cin &gt;&gt; a &gt;&gt; b &gt;&gt; c &gt;&gt; f[<span class="number">0</span>] &gt;&gt; f[<span class="number">1</span>] &gt;&gt; n &gt;&gt; p;</span><br><span class="line">    a%=p, b%=p, c%=p, f[<span class="number">0</span>]%=p, f[<span class="number">1</span>]%=p;</span><br><span class="line">    mp[&#123;f[<span class="number">0</span>],f[<span class="number">1</span>]&#125;] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> op, len;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">2</span>,N)&#123;</span><br><span class="line">        f[i] = ((a*f[i<span class="number">-1</span>]*f[i<span class="number">-2</span>]%p + b*f[i<span class="number">-1</span>]%p + c*f[i<span class="number">-2</span>]%p)%p+p)%p;</span><br><span class="line">        <span class="keyword">if</span> (mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] != <span class="number">0</span>)&#123;</span><br><span class="line">            op = mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;];</span><br><span class="line">            len = i - op;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= op+len) cout &lt;&lt; f[n] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> cout &lt;&lt; f[(n-op)%len+op] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E9%80%A3%E9%80%9A%E5%88%86%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的誤導向筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E9%80%A3%E9%80%9A%E5%88%86%E9%87%8F/" class="post-title-link" itemprop="url">【模板】連通分量</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-25 16:18:43" itemprop="dateCreated datePublished" datetime="2021-09-25T16:18:43+08:00">2021-09-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-28 11:07:08" itemprop="dateModified" datetime="2021-09-28T11:07:08+08:00">2021-09-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="名詞解釋">名詞解釋</h2>
+<ul>
+<li><p>連通分量：數量最多、擴展範圍最大</p></li>
+<li><p>割點：把這個點拔掉會增加連通塊數量</p></li>
+<li><p>橋：把這個邊拔掉會增加連通塊數量</p></li>
+<li><p>無向連通分量</p>
+<ul>
+<li>橋連通分量（邊雙連通分量）：一個連通分量內，拔掉任一點連通塊數量不會增加</li>
+<li>點雙連通分量：一個連通分量內，拔掉任一邊連通塊數量不會增加</li>
+</ul></li>
+<li><p>有向圖連通分量</p>
+<ul>
+<li>強連通分量：一個連通分量內，a 能到 b、b 能到 a</li>
+</ul></li>
+</ul>
+<h2 id="dfs-tree">DFS Tree</h2>
+<p>把一張圖 DFS，邊可以分成四種：</p>
+<ul>
+<li>Tree Edge：DFS 過程中經過的邊。DFS 時，走向沒走過的臨點的鄰邊都是 Tree Edge。</li>
+<li>Back Edge：通向祖先的鄰邊。</li>
+<li>Forward Edge：不再 DFS Tree 上，通向子樹的鄰邊。</li>
+<li>Cross Edge：通向不存在父子關係的點的鄰邊。</li>
+</ul>
+<p>在 DFS 時，遇到走訪過的邊就是下面三種之一。 並且無向圖只存在 Tree Edge 和 Back Edge（Forward Edge 因為無向等同於 Back Edge；u 若存在 Cross Edge 連到 v，那在 v 時就應改把這條邊當成 Tree Edge）。</p>
+<h2 id="tarjans-algorithm">Tarjan's Algorithm</h2>
+<h3 id="lowu"><span class="math inline">\(low[u]\)</span></h3>
+<p><strong><span class="math inline">\(low[u]\)</span> 代表從 u 出發，經過子樹，再經過最多一條 Back Edge 能達到的最淺深度</strong>。</p>
+<p>維護 <span class="math inline">\(low\)</span> 很簡單，當在 DFS 時從 <span class="math inline">\(u\)</span> 走到 <span class="math inline">\(v\)</span>，求 <span class="math inline">\(low[u]\)</span>：</p>
+<ul>
+<li>走到 Tree Edge，直接拿他的 <span class="math inline">\(low\)</span> ：<span class="math inline">\(low[u] = min(low[u], low[v])\)</span></li>
+<li>走到 Back Edge（除了從走來的這條以外），拿他的深度：<span class="math inline">\(low[u] = min(low[u], dep[v])\)</span></li>
+<li>走到 Forward Edge 和 Cross Edge 無視。</li>
+</ul>
+<h3 id="找割點">找割點</h3>
+<p><strong>若點 <span class="math inline">\(u\)</span> 是割點，代表它可以將至少一個子節點 <span class="math inline">\(v\)</span> 和父節點隔開</strong>（拿掉 <span class="math inline">\(u\)</span> 會導致子節點走不到父節點）。 若且唯若 <span class="math inline">\(low[v] \leq dep[u]\)</span></p>
+<h3 id="點雙聯通">點雙聯通</h3>
+<h3 id="橋連通">橋連通</h3>
+<h2 id="kosaraju">Kosaraju</h2>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/21/Hexo-Github-Pages-%E6%9E%B6%E7%AB%99%E7%AD%86%E8%A8%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的誤導向筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/21/Hexo-Github-Pages-%E6%9E%B6%E7%AB%99%E7%AD%86%E8%A8%98/" class="post-title-link" itemprop="url">Hexo + Github Pages 架站筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-21 22:48:16" itemprop="dateCreated datePublished" datetime="2021-09-21T22:48:16+08:00">2021-09-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-28 11:08:51" itemprop="dateModified" datetime="2021-09-28T11:08:51+08:00">2021-09-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E8%A1%93%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">技術筆記</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="hexo">Hexo</h2>
+<blockquote>
+<p>想寫日記和技術筆記，但我巴哈的身分證字號後四碼忘了，只好自己架部落格。 作為第一篇文章，來記錄這兩天晚上的折騰過程。</p>
+</blockquote>
+<h3 id="hexo-初識">Hexo 初識</h3>
+<p>裝他（我自己沒裝 node.js）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install node</span><br><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+<p>建立 hexo 專案：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init [Directory]</span><br></pre></td></tr></table></figure>
+<p>或是把當前資料夾當成目錄：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init </span><br></pre></td></tr></table></figure>
+<p>Hexo 會射一坨檔案進去，（常用）目錄結構列舉如下：</p>
+<ul>
+<li>scaffolds：放模板</li>
+<li>source：放 post（文章）和 page（如 about、tag）</li>
+<li>themes：主題直接 clone 到裡面</li>
+<li>config.yml：站點配置文件</li>
+</ul>
+<p>注意，主題配置文件也叫 <code>config.yml</code>，別搞混了。</p>
+<h3 id="新增第一則-post">新增第一則 post</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&#x27;owo&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>接著會新增 <code>source/_posts/owo.md</code>。刪除 post 直接刪該檔案即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo cl</span><br><span class="line">$ hexo g</span><br></pre></td></tr></table></figure>
+<p>前一個好像是清除暫存檔。後者把 hexo 檔案們編譯成靜態網站檔案。</p>
+<p>接著，預覽你的網站。他會吐位址給你：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<h2 id="github-pages">Github Pages</h2>
+<p>首先建立一個名為 <code>username.github.io</code> 的公開 repo。</p>
+<p>接著在 hexo 專案下安裝 deploy 套件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
+<p>打開站點配置文件，修改 deploy 和 url 部分：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://github.com/username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">you_url.com</span></span><br></pre></td></tr></table></figure>
+<p>然後你就可以編譯並部署：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo cl</span><br><span class="line">$ hexo g -d <span class="comment">#hexo generate &amp;&amp; hexo deploy</span></span><br></pre></td></tr></table></figure>
+<h2 id="hexo-主題next">Hexo 主題：Next</h2>
+<p>直接把 Next 主題 clone 到 <code>themes</code> 下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+<p>修改站點配置文件裡的 <code>theme</code>（預設為 <code>landscape</code>）:</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br></pre></td></tr></table></figure>
+<p>Next 有四大主題：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Muse</span></span><br><span class="line"><span class="comment">#scheme: Mist</span></span><br><span class="line"><span class="comment">#scheme: Pisces</span></span><br><span class="line"><span class="comment">#scheme: Gemini</span></span><br></pre></td></tr></table></figure>
+<h3 id="標籤和分類">標籤和分類</h3>
+<p>產生 tags 頁面和 categories 頁面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new page tags</span><br><span class="line">$ hexo new page categories</span><br></pre></td></tr></table></figure>
+<p>修改主題配置文件中的 <code>menu</code></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-th</span></span><br></pre></td></tr></table></figure>
+<p>其他頁面如法炮製即可。</p>
+<p>在每篇貼文的開始可以指定 tags 和 categories：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: Hexo + Github Pages 架站筆記</span><br><span class="line">date: 2021-09-21 22:48:16</span><br><span class="line">tags: &#x27;Hexo&#x27;</span><br><span class="line"><span class="section">catogories: &#x27;技術筆記&#x27;</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
+<p>tags 可以有好幾個，categories 只能有一個。</p>
+<h3 id="語言">語言</h3>
+<p>修改站點配置文件中的 <code>languages</code> 成 <code>zh-TW</code>。</p>
+<p>在主題資料夾下的 <code>languages</code> 資料夾可以找對應語言的翻譯對照。部分文件如下：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">首頁</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">歸檔</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">分類</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">標籤</span></span><br><span class="line">  <span class="attr">about:</span> <span class="string">關於</span></span><br><span class="line">  <span class="attr">search:</span> <span class="string">搜尋</span></span><br><span class="line">  <span class="attr">schedule:</span> <span class="string">時間表</span></span><br><span class="line">  <span class="attr">sitemap:</span> <span class="string">網站地圖</span></span><br><span class="line">  <span class="attr">commonweal:</span> <span class="string">公益</span> <span class="number">404</span></span><br></pre></td></tr></table></figure>
+<h3 id="頭像">頭像</h3>
+<p>把頭像放在主題資料夾下的 <code>source/images</code>，然後更改主題配置文件（僅支援 gif）：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/avatar.gif</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="參考資料">參考資料</h2>
+<ul>
+<li>https://ithelp.ithome.com.tw/users/20119486/ironman/2944?page=1</li>
+<li>https://zhuanlan.zhihu.com/p/30836436</li>
+<li>https://theme-next.iissnan.com/theme-settings.html#use-bg-animation</li>
+<li>https://blog.akizukineko.tw/hexo-next-themes-backgroudpic/</li>
+</ul>
 
       
     </div>
@@ -383,20 +652,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
