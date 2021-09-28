@@ -28,7 +28,7 @@
 <meta property="og:description" content="題意 \(a, b, c, r_0, r_1, n, p\) 和遞迴關係式 \(r_{i+2} &#x3D; a \cdot r_{i+1} \cdot r_i + b \cdot r_{i+1} + c \cdot r_i\)，求 \(r_n \mod p\)  \(n \le 10^{18}\) \(p \le 10^4\)  觀察  因為有 \(r_{i+1} \cdot r_i\)，不能用矩陣快速冪">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2021-09-27T07:55:45.000Z">
-<meta property="article:modified_time" content="2021-09-28T03:18:58.796Z">
+<meta property="article:modified_time" content="2021-09-28T03:45:48.757Z">
 <meta property="article:author" content="rurutoria7">
 <meta property="article:tag" content="題解">
 <meta property="article:tag" content="數學">
@@ -193,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-09-28 11:18:58" itemprop="dateModified" datetime="2021-09-28T11:18:58+08:00">2021-09-28</time>
+                <time title="修改時間：2021-09-28 11:45:48" itemprop="dateModified" datetime="2021-09-28T11:45:48+08:00">2021-09-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -230,7 +230,7 @@
 </ul>
 <h2 id="作法">作法</h2>
 <p>當只要出現兩項 <span class="math inline">\({f[i-1],f[i]}\)</span> 曾經出現過，就代表接下來會循環： <span class="math inline">\(A, B, C, ..., X, ..., X, ..., X...\)</span></p>
-<p>我們紀錄第一次循環出現的位置和循環節長度，若 <span class="math inline">\(N\)</span> 在循環出現前可以直接回答，否則計算出 <span class="math inline">\(N\)</span> 在循環節中的哪個位置再回答。</p>
+<p>我們紀錄第一次循環出現的位置和循環節長度，若 <span class="math inline">\(n\)</span> 在循環出現前可以直接回答，否則計算出 <span class="math inline">\(n\)</span> 在循環節中的哪個位置再回答。</p>
 <h2 id="ac-code">AC Code</h2>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">5e7</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a, b, c, r0, r1, n, p;</span><br><span class="line"><span class="keyword">int</span> f[N];</span><br><span class="line">map&lt;pii,<span class="keyword">int</span>&gt; mp; <span class="comment">//&#123;&#123;f[i-1], f[i]&#125;, i&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cin &gt;&gt; a &gt;&gt; b &gt;&gt; c &gt;&gt; f[<span class="number">0</span>] &gt;&gt; f[<span class="number">1</span>] &gt;&gt; n &gt;&gt; p;</span><br><span class="line">    a%=p, b%=p, c%=p, f[<span class="number">0</span>]%=p, f[<span class="number">1</span>]%=p;</span><br><span class="line">    mp[&#123;f[<span class="number">0</span>],f[<span class="number">1</span>]&#125;] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> op, len;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">2</span>,N)&#123;</span><br><span class="line">        f[i] = ((a*f[i<span class="number">-1</span>]*f[i<span class="number">-2</span>]%p + b*f[i<span class="number">-1</span>]%p + c*f[i<span class="number">-2</span>]%p)%p+p)%p;</span><br><span class="line">        <span class="keyword">if</span> (mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] != <span class="number">0</span>)&#123;</span><br><span class="line">            op = mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;];</span><br><span class="line">            len = i - op;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= op+len) cout &lt;&lt; f[n] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> cout &lt;&lt; f[(n-op)%len+op] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
