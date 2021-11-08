@@ -20,21 +20,22 @@
     var CONFIG = {"hostname":"rurutoria7.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="題意 \(a, b, c, r_0, r_1, n, p\) 和遞迴關係式 \(r_{i+2} &#x3D; a \cdot r_{i+1} \cdot r_i + b \cdot r_{i+1} + c \cdot r_i\)，求 \(r_n \mod p\)  \(n \le 10^{18}\) \(p \le 10^4\)  觀察  因為有 \(r_{i+1} \cdot r_i\)，不能用矩陣快速冪">
+  <meta name="description" content="樸素的多項式乘法，必須在 \(O(n^2)\) 完成 我們可以透過 FFT 的協助，在 \(O(nlogn)\) 時間內完成多項式乘法。 點值表達式 可以帶入至少 \(n\) 個點來唯一表示 \(n-1\) 次多項式。 所以，\(n &gt; deg\ f(x)\)，\(f(x)\) 能以點值表達式表示為 \[ (x_0,f(x_0)), (x_1,f(x_1)), \dots, (x_{n-1}">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【題解】TOJ 638. 遞回呀遞回">
-<meta property="og:url" content="https://rurutoria7.github.io/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/index.html">
+<meta property="og:title" content="【模板】快速傅立葉變換">
+<meta property="og:url" content="https://rurutoria7.github.io/2021/10/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B/index.html">
 <meta property="og:site_name" content="總有一天會用到的誤導向筆記">
-<meta property="og:description" content="題意 \(a, b, c, r_0, r_1, n, p\) 和遞迴關係式 \(r_{i+2} &#x3D; a \cdot r_{i+1} \cdot r_i + b \cdot r_{i+1} + c \cdot r_i\)，求 \(r_n \mod p\)  \(n \le 10^{18}\) \(p \le 10^4\)  觀察  因為有 \(r_{i+1} \cdot r_i\)，不能用矩陣快速冪">
+<meta property="og:description" content="樸素的多項式乘法，必須在 \(O(n^2)\) 完成 我們可以透過 FFT 的協助，在 \(O(nlogn)\) 時間內完成多項式乘法。 點值表達式 可以帶入至少 \(n\) 個點來唯一表示 \(n-1\) 次多項式。 所以，\(n &gt; deg\ f(x)\)，\(f(x)\) 能以點值表達式表示為 \[ (x_0,f(x_0)), (x_1,f(x_1)), \dots, (x_{n-1}">
 <meta property="og:locale" content="zh_TW">
-<meta property="article:published_time" content="2021-09-27T07:55:45.000Z">
-<meta property="article:modified_time" content="2021-10-04T08:14:12.250Z">
+<meta property="og:image" content="https://rurutoria7.github.io/Users/arutoriawhite/Repos/rurutoria7/source/image/fft3.png">
+<meta property="article:published_time" content="2021-10-25T12:32:10.000Z">
+<meta property="article:modified_time" content="2021-11-08T16:25:43.112Z">
 <meta property="article:author" content="rurutoria7">
-<meta property="article:tag" content="題解">
-<meta property="article:tag" content="數學">
+<meta property="article:tag" content="競程">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rurutoria7.github.io/Users/arutoriawhite/Repos/rurutoria7/source/image/fft3.png">
 
-<link rel="canonical" href="https://rurutoria7.github.io/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/">
+<link rel="canonical" href="https://rurutoria7.github.io/2021/10/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B/">
 
 
 <script id="page-configurations">
@@ -47,7 +48,7 @@
   };
 </script>
 
-  <title>【題解】TOJ 638. 遞回呀遞回 | 總有一天會用到的誤導向筆記</title>
+  <title>【模板】快速傅立葉變換 | 總有一天會用到的誤導向筆記</title>
   
 
 
@@ -163,7 +164,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/10/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -176,7 +177,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【題解】TOJ 638. 遞回呀遞回
+          【模板】快速傅立葉變換
         </h1>
 
         <div class="post-meta">
@@ -186,14 +187,14 @@
               </span>
               <span class="post-meta-item-text">發表於</span>
 
-              <time title="創建時間：2021-09-27 15:55:45" itemprop="dateCreated datePublished" datetime="2021-09-27T15:55:45+08:00">2021-09-27</time>
+              <time title="創建時間：2021-10-25 20:32:10" itemprop="dateCreated datePublished" datetime="2021-10-25T20:32:10+08:00">2021-10-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-10-04 16:14:12" itemprop="dateModified" datetime="2021-10-04T16:14:12+08:00">2021-10-04</time>
+                <time title="修改時間：2021-11-09 00:25:43" itemprop="dateModified" datetime="2021-11-09T00:25:43+08:00">2021-11-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -201,7 +202,11 @@
               </span>
               <span class="post-meta-item-text">分類於</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                  <a href="/categories/%E6%95%B8%E5%AD%B8/" itemprop="url" rel="index"><span itemprop="name">數學</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B8%E5%AD%B8/%E6%A8%A1%E6%9D%BF/" itemprop="url" rel="index"><span itemprop="name">模板</span></a>
                 </span>
             </span>
 
@@ -216,23 +221,92 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="題意">題意</h2>
-<p><span class="math inline">\(a, b, c, r_0, r_1, n, p\)</span> 和遞迴關係式 <span class="math inline">\(r_{i+2} = a \cdot r_{i+1} \cdot r_i + b \cdot r_{i+1} + c \cdot r_i\)</span>，求 <span class="math inline">\(r_n \mod p\)</span></p>
-<ul>
-<li><span class="math inline">\(n \le 10^{18}\)</span></li>
-<li><span class="math inline">\(p \le 10^4\)</span></li>
-</ul>
-<h2 id="觀察">觀察</h2>
-<ul>
-<li>因為有 <span class="math inline">\(r_{i+1} \cdot r_i\)</span>，不能用矩陣快速冪</li>
-<li>只會用到前兩項</li>
-<li><span class="math inline">\(p \le 10^4\)</span>，因此前兩項的可能性不超過 <span class="math inline">\(10^8\)</span> 種</li>
-</ul>
-<h2 id="作法">作法</h2>
-<p>當只要出現兩項 <span class="math inline">\({f[i-1],f[i]}\)</span> 曾經出現過，就代表接下來會循環： <span class="math inline">\(A, B, C, ..., X, ..., X, ..., X...\)</span></p>
-<p>我們紀錄第一次循環出現的位置和循環節長度，若 <span class="math inline">\(n\)</span> 在循環出現前可以直接回答，否則計算出 <span class="math inline">\(n\)</span> 在循環節中的哪個位置再回答。</p>
-<h2 id="ac-code">AC Code</h2>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">5e7</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a, b, c, r0, r1, n, p;</span><br><span class="line"><span class="keyword">int</span> f[N];</span><br><span class="line">map&lt;pii,<span class="keyword">int</span>&gt; mp; <span class="comment">//&#123;&#123;f[i-1], f[i]&#125;, i&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cin &gt;&gt; a &gt;&gt; b &gt;&gt; c &gt;&gt; f[<span class="number">0</span>] &gt;&gt; f[<span class="number">1</span>] &gt;&gt; n &gt;&gt; p;</span><br><span class="line">    a%=p, b%=p, c%=p, f[<span class="number">0</span>]%=p, f[<span class="number">1</span>]%=p;</span><br><span class="line">    mp[&#123;f[<span class="number">0</span>],f[<span class="number">1</span>]&#125;] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> op, len;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">2</span>,N)&#123;</span><br><span class="line">        f[i] = ((a*f[i<span class="number">-1</span>]*f[i<span class="number">-2</span>]%p + b*f[i<span class="number">-1</span>]%p + c*f[i<span class="number">-2</span>]%p)%p+p)%p;</span><br><span class="line">        <span class="keyword">if</span> (mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] != <span class="number">0</span>)&#123;</span><br><span class="line">            op = mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;];</span><br><span class="line">            len = i - op;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= op+len) cout &lt;&lt; f[n] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> cout &lt;&lt; f[(n-op)%len+op] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>樸素的多項式乘法，必須在 <span class="math inline">\(O(n^2)\)</span> 完成</p>
+<p>我們可以透過 FFT 的協助，在 <span class="math inline">\(O(nlogn)\)</span> 時間內完成多項式乘法。</p>
+<h2 id="點值表達式">點值表達式</h2>
+<p>可以帶入至少 <span class="math inline">\(n\)</span> 個點來唯一表示 <span class="math inline">\(n-1\)</span> 次多項式。</p>
+<p>所以，<span class="math inline">\(n &gt; deg\ f(x)\)</span>，<span class="math inline">\(f(x)\)</span> 能以<strong>點值表達式</strong>表示為 <span class="math display">\[
+(x_0,f(x_0)), (x_1,f(x_1)), \dots, (x_{n-1},f(x_{n-1}))
+\]</span> 兩個點值表達式的乘法可以在 <span class="math inline">\(O(n)\)</span> 達成，<span class="math inline">\((fg)(x)\)</span> 可以被表示為： <span class="math display">\[
+(x_0,f(x_0)g(x_0)), (x_1,f(x_1)g(x_1)), \dots, (x_{n-1},f(x_{n-1})g(x_{n-1}))
+\]</span> 記得取 <span class="math inline">\(n &gt; deg\ (fg)(x)\)</span></p>
+<p>因此對於多項式乘法，我們有了計畫：</p>
+<p><strong>係數表達式 <span class="math inline">\(\rightarrow\)</span> 點值表達式 <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(O(n)\)</span> 相乘 <span class="math inline">\(\rightarrow\)</span> 點值表達式 <span class="math inline">\(\rightarrow\)</span> 係數表達式</strong></p>
+<p>我們的瓶頸將會在，如何快速的做到係數表達式轉換乘點值表達式</p>
+<h2 id="fft">FFT</h2>
+<p>定義一個函數 <span class="math inline">\(FFT\)</span>，傳入 <span class="math inline">\(X_0, X_1, \dots, X_{n-1}\)</span> 和 <span class="math inline">\(n\)</span> 個係數 <span class="math inline">\(P_0, P_1, \dots, P_{n-1}\)</span>，可以計算出帶入 <span class="math inline">\(X\)</span> 的結果是多少。 $$ FFT(X,P) =</p>
+<span class="math display">\[\begin{bmatrix}
+X_0^0 &amp; X_0^1 &amp; \dots &amp; X_0^{n-1}\\
+X_1^0 &amp; X_1^1 &amp; \dots &amp; X_1^{n-1}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+X_{n-1}^0 &amp; X_{n-1}^{1} &amp; \dots &amp; X_{n-1}^{n-1}
+\end{bmatrix}\]</span>
+<span class="math display">\[\begin{bmatrix}
+P_0\\
+P_1\\
+\vdots\\
+P_{n-1}\\
+\end{bmatrix}\]</span>
+<p>=</p>
+<span class="math display">\[\begin{bmatrix}
+f(X_0)\\
+f(X_1)\\
+\vdots\\
+f(X_{n-1})\\
+\end{bmatrix}\]</span>
+<span class="math display">\[
+為了減少計算量，我們可以利用偶函數的性質：$f(x) = f(-x)$，只要帶入一個數字就能得到兩份結果：
+\]</span>
+<span class="math display">\[\begin{aligned}
+f(x) &amp; = p_0x^0 + p_1x^1 + \dots + p_{n-1}x^{n-1}\\
+&amp; = (p_0x^0 + p_2x^2 + \dots + p_{n-2}^{n-2}) + x(p_1x^1 + p_3x^2 + \dots + p_{n-1}^{n-2})
+\end{aligned}\]</span>
+<p><span class="math display">\[
+為了更方便觀察出遞迴的性質，以及 $f(x)$ 和 $f(-x)$ 的關係，可以這樣表示：
+\]</span> f(x) = f_e(x^2) + xf_o(x^2)\ f(-x) = f_e(x) -xf_o(x^2)\ f_e(x) = p_0x^0 + p_2x^2 + + p_{n-2}x^{n 2 -1}\ f_o(x) = p_1x^0 + p_3x^2 + + p_{n-1}x^{n 2 -1} <span class="math display">\[
+現在，只要算出 $f(x)$ 就能順便得到 $f(-x)$。把後半的 $X$ 皆對應到前半的 $X$，使他們互為相反數：
+\]</span> X_i = X_{i+n 2}, i&lt;n 2 <span class="math display">\[
+這樣就有了 $FFT$ 函數的轉移，大概長這樣：
+\]</span> FFT(X,P) = merge( FFT(X_{half},P_{even}), FFT(X_{half},P_{odd}))\ $$</p>
+<p><span class="math display">\[
+X_{half} = [X_0, X_1, \dots, X_{\frac n 2-1}]\\
+P_{even} = [P_0, P_2, \dots, P_{n-2}]\\
+P_{odd} = [P_1, P_3, \dots, P_{n-1}]\\
+\]</span></p>
+<p><span class="math inline">\(merge\)</span> 的地方，就是第 <span class="math inline">\(i\)</span> 項相加得到 <span class="math inline">\(f(X_i)\)</span>，相減得到 <span class="math inline">\(f(X_{i+\frac n 2})\)</span></p>
+<p>接著需要處理，<span class="math inline">\(X\)</span> 裡面究竟該放什麼，才能順利的遞迴下去。考慮： <span class="math display">\[
+X = [a_0, a_1, \dots, a_{n-1}]
+\]</span> 遞迴下去會變成： <span class="math display">\[
+[a_0^2, a_1^2, \dots, a_{\frac n 2 -1}^2]\\
+[a_0^4, a_1^4, \dots, a_{\frac n 4 -1}^4]\\
+\vdots\\
+[a_0^2]
+\]</span> 我們需要在遞迴的每一層都保證後半部是前半部的相反數，也就是 <span class="math inline">\(X_i = X_{i+\frac n 2}, i&lt;\frac n 2\)</span>。</p>
+<p>只考慮實數是不可能的，因為下一層是上一層的平方，不會是相反數。</p>
+<h3 id="單位複根">單位複根</h3>
+<p><img src="/Users/arutoriawhite/Repos/rurutoria7/source/image/fft3.png" width = 400></p>
+<p>定義 <span class="math inline">\(\omega_n^i\)</span> 為 <span class="math inline">\(x^n=1\)</span> 下的其中一個解，這樣的解有 <span class="math inline">\(n\)</span> 個，把單位圓等分，且有以下性質我們會用到的性質： <span class="math display">\[
+\omega_n^i = \omega_n^{i+\frac n 2}\\
+(\omega_n^i)^2 = \omega_{\frac n 2}^i
+\]</span> 這兩個性質用<strong>n次單位根</strong>等分單位圓、複數相乘幅角相加可以說明</p>
+<p>直接取 <span class="math inline">\(X_i = \omega_n^i\)</span>，單位根的性質恰好符合我們的要求：<strong>保持後半部是前半部的相反數</strong></p>
+<p>遞迴下去之後，<span class="math inline">\(X = [\omega_{\frac n 2}^0, \omega_{\frac n 2}^1, \dots, \omega_{\frac n 2}^{\frac n 2 -1}]\)</span>，依舊保證了這件事。</p>
+<h3 id="inverse-fft">Inverse FFT</h3>
+<p>前面有提到 FFT 可以看成矩陣相乘的過程，那個 <span class="math inline">\(n \times n\)</span> 的矩陣我們叫他 <span class="math inline">\(DFT\)</span> 矩陣。</p>
+<p>從點值找出係數的過程，就是左右乘上 <span class="math inline">\(DFT^{-1}\)</span>，而 <span class="math inline">\(DFT^{-1}\)</span> 長這樣： <span class="math display">\[
+\begin{bmatrix}
+\omega_0^0 &amp; \omega_0^{-1} &amp; \dots &amp; \omega_0^{-(n-1)}\\
+\omega_1^0 &amp; \omega_1^{-1} &amp; \dots &amp; \omega_1^{-(n-1)}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+\omega_{n-1}^0 &amp; \omega_{n-1}^{-1} &amp; \dots &amp; \omega_{n-1}^{-(n-1)}\\
+\end{bmatrix}
+\]</span> 就是每個元素都倒數，原因我不是很清楚。</p>
+<h3 id="實作">實作</h3>
+<p><span class="math display">\[
+\omega_n^k = cos \frac{2 \pi k}{n} + sin \frac{2 \pi k}{n}i
+\]</span></p>
+<p>這很容易在複數平面上看端倪。</p>
+<p>實作時就用這個公式及 C++ 內建的 Complex 處理即可。</p>
 
     </div>
 
@@ -242,8 +316,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E9%A1%8C%E8%A7%A3/" rel="tag"># 題解</a>
-              <a href="/tags/%E6%95%B8%E5%AD%B8/" rel="tag"># 數學</a>
+              <a href="/tags/%E7%AB%B6%E7%A8%8B/" rel="tag"># 競程</a>
           </div>
 
         
@@ -252,13 +325,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E9%80%A3%E9%80%9A%E5%88%86%E9%87%8F/" rel="prev" title="【模板】連通分量">
-      <i class="fa fa-chevron-left"></i> 【模板】連通分量
+    <a href="/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-639-Hello-Weird-Music-Sheet/" rel="prev" title="【題解】TOJ 639. Hello, Weird Music Sheet!">
+      <i class="fa fa-chevron-left"></i> 【題解】TOJ 639. Hello, Weird Music Sheet!
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-637-%E6%9C%AC%E7%94%B0%E5%B0%8F%E7%8B%BC/" rel="next" title="【題解】TOJ 637. 本田小狼">
-      【題解】TOJ 637. 本田小狼 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -317,7 +387,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%8C%E6%84%8F"><span class="nav-number">1.</span> <span class="nav-text">題意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%80%E5%AF%9F"><span class="nav-number">2.</span> <span class="nav-text">觀察</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">作法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ac-code"><span class="nav-number">4.</span> <span class="nav-text">AC Code</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BB%9E%E5%80%BC%E8%A1%A8%E9%81%94%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">點值表達式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fft"><span class="nav-number">2.</span> <span class="nav-text">FFT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%96%AE%E4%BD%8D%E8%A4%87%E6%A0%B9"><span class="nav-number">2.1.</span> <span class="nav-text">單位複根</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inverse-fft"><span class="nav-number">2.2.</span> <span class="nav-text">Inverse FFT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%A6%E4%BD%9C"><span class="nav-number">2.3.</span> <span class="nav-text">實作</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
