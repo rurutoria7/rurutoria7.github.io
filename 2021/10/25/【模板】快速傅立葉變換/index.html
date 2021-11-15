@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://rurutoria7.github.io/2021/10/25/image/fft3.png">
 <meta property="article:published_time" content="2021-10-25T12:32:10.000Z">
-<meta property="article:modified_time" content="2021-11-08T16:44:57.023Z">
+<meta property="article:modified_time" content="2021-11-15T15:35:15.642Z">
 <meta property="article:author" content="rurutoria7">
 <meta property="article:tag" content="競程">
 <meta name="twitter:card" content="summary">
@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-11-09 00:44:57" itemprop="dateModified" datetime="2021-11-09T00:44:57+08:00">2021-11-09</time>
+                <time title="修改時間：2021-11-15 23:35:15" itemprop="dateModified" datetime="2021-11-15T23:35:15+08:00">2021-11-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -235,70 +235,110 @@
 <p>我們的瓶頸將會在，如何快速的做到係數表達式轉換點值表達式</p>
 <h2 id="fft">FFT</h2>
 <p>定義一個函數 <span class="math inline">\(FFT\)</span>，傳入 <span class="math inline">\(X_0, X_1, \dots, X_{n-1}\)</span> 和 <span class="math inline">\(n\)</span> 個係數 <span class="math inline">\(P_0, P_1, \dots, P_{n-1}\)</span>，可以計算出帶入 <span class="math inline">\(X\)</span> 的結果是多少。</p>
-$$ FFT(X,P) =
-<span class="math display">\[\begin{bmatrix}
+<div>
+<p><span class="math display">\[
+FFT(X,P) =
+\begin{bmatrix}
 X_0^0 &amp; X_0^1 &amp; \dots &amp; X_0^{n-1}\\
 X_1^0 &amp; X_1^1 &amp; \dots &amp; X_1^{n-1}\\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
 X_{n-1}^0 &amp; X_{n-1}^{1} &amp; \dots &amp; X_{n-1}^{n-1}
-\end{bmatrix}\]</span>
-<span class="math display">\[\begin{bmatrix}
+\end{bmatrix}
+\begin{bmatrix}
 P_0\\
 P_1\\
 \vdots\\
 P_{n-1}\\
-\end{bmatrix}\]</span>
-<p>=</p>
-<span class="math display">\[\begin{bmatrix}
+\end{bmatrix}
+=
+\begin{bmatrix}
 f(X_0)\\
 f(X_1)\\
 \vdots\\
 f(X_{n-1})\\
-\end{bmatrix}\]</span>
-<p>$$</p>
+\end{bmatrix}\]</span></p>
+</div>
 <p>為了減少計算量，我們可以利用偶函數的性質：<span class="math inline">\(f(x) = f(-x)\)</span>，只要帶入一個數字就能得到兩份結果：</p>
-<p><span class="math display">\[\begin{aligned}
-f(x) &amp; = p_0x^0 + p_1x^1 + \dots + p_{n-1}x^{n-1}\\
+<div>
+<p><span class="math display">\[
+\begin{aligned}
+f(x) &amp; = p_0x^0 + p_1x^1 + \dots + p_{n-1}x^{n-1}\\\\
 &amp; = (p_0x^0 + p_2x^2 + \dots + p_{n-2}^{n-2}) + x(p_1x^1 + p_3x^2 + \dots + p_{n-1}^{n-2})
 \end{aligned}\]</span></p>
+</div>
 <p>為了更方便觀察出遞迴的性質，以及 <span class="math inline">\(f(x)\)</span> 和 <span class="math inline">\(f(-x)\)</span> 的關係，可以這樣表示：</p>
-<p><span class="math display">\[f(x) = f_e(x^2) + xf_o(x^2)\\
+<div>
+<p><span class="math display">\[
+f(x) = f_e(x^2) + xf_o(x^2)\\
 f(-x) = f_e(x) -xf_o(x^2)\\
 f_e(x) = p_0x^0 + p_2x^2 + \dots + p_{n-2}x^{\frac n 2 -1}\\
-f_o(x) = p_1x^0 + p_3x^2 + \dots + p_{n-1}x^{\frac n 2 -1}\]</span></p>
+f_o(x) = p_1x^0 + p_3x^2 + \dots + p_{n-1}x^{\frac n 2 -1}\\
+\]</span></p>
+</div>
 <p>現在，只要算出 <span class="math inline">\(f(x)\)</span> 就能順便得到 <span class="math inline">\(f(-x)\)</span>。把後半的 <span class="math inline">\(X\)</span> 皆對應到前半的 <span class="math inline">\(X\)</span>，使他們互為相反數：</p>
-<p><span class="math display">\[X_i = X_{i+\frac n 2}, i&lt;\frac n 2\]</span></p>
-<p>這樣就有了 <span class="math inline">\(FFT\)</span> 函數的轉移，大概長這樣： <span class="math display">\[FFT(X,P) = merge( FFT(X_{half},P_{even}),\ FFT(X_{half},P_{odd}))\\\]</span></p>
-<p><span class="math display">\[X_{half} = [X_0, X_1, \dots, X_{\frac n 2-1}]\\
-P_{even} = [P_0, P_2, \dots, P_{n-2}]\\
-P_{odd} = [P_1, P_3, \dots, P_{n-1}]\\\]</span></p>
+<div>
+<p><span class="math display">\[
+X_i = X_{i+\frac n 2}, i&lt;\frac n 2
+\]</span></p>
+</div>
+<p>這樣就有了 <span class="math inline">\(FFT\)</span> 函數的轉移，大概長這樣：</p>
+<div>
+<p><span class="math display">\[
+FFT(X,P) = merge( FFT(X_{half},P_{even}),\ FFT(X_{half},P_{odd}))
+\]</span></p>
+<p><span class="math display">\[
+X_{half} = [X_0, X_1, \dots, X_{\frac n 2-1}] \\
+P_{even} = [P_0, P_2, \dots, P_{n-2}] \\
+P_{odd} = [P_1, P_3, \dots, P_{n-1}] \\
+\]</span></p>
+</div>
 <p><span class="math inline">\(merge\)</span> 的地方，就是第 <span class="math inline">\(i\)</span> 項相加得到 <span class="math inline">\(f(X_i)\)</span>，相減得到 <span class="math inline">\(f(X_{i+\frac n 2})\)</span></p>
 <p>接著需要處理，<span class="math inline">\(X\)</span> 裡面究竟該放什麼，才能順利的遞迴下去。考慮：</p>
-<p><span class="math display">\[X = [a_0, a_1, \dots, a_{n-1}]\]</span></p>
+<div>
+<p><span class="math display">\[
+X = [a_0, a_1, \dots, a_{n-1}]
+\]</span></p>
+</div>
 <p>遞迴下去會變成：</p>
-<p><span class="math display">\[[a_0^2, a_1^2, \dots, a_{\frac n 2 -1}^2]\]</span></p>
+<div>
+<p><span class="math display">\[
+[a_0^2, a_1^2, \dots, a_{\frac n 2 -1}^2]
+\]</span></p>
+</div>
 <p>我們需要在遞迴的每一層都保證後半部是前半部的相反數，也就是 <span class="math inline">\(X_i = X_{i+\frac n 2}, i&lt;\frac n 2\)</span>。</p>
 <p>只考慮實數是不可能的，因為下一層是上一層的平方，不會是相反數。</p>
 <h3 id="單位複根">單位複根</h3>
 <p><img src="../image/fft3.png" width = 400></p>
 <p>定義 <span class="math inline">\(\omega_n^i\)</span> 為 <span class="math inline">\(x^n=1\)</span> 下的其中一個解，這樣的解有 <span class="math inline">\(n\)</span> 個，把單位圓等分，且有以下性質我們會用到的性質：</p>
-<p><span class="math display">\[\omega_n^i = \omega_n^{i+\frac n 2}\\
-(\omega_n^i)^2 = \omega_{\frac n 2}^i\]</span></p>
+<div>
+<p><span class="math display">\[
+\omega_n^i = \omega_n^{i+\frac n 2}\\
+(\omega_n^i)^2 = \omega_{\frac n 2}^i
+\]</span></p>
+</div>
 <p>這兩個性質用<strong>n次單位根</strong>等分單位圓、複數相乘幅角相加可以說明</p>
 <p>直接取 <span class="math inline">\(X_i = \omega_n^i\)</span>，單位根的性質恰好符合我們的要求：<strong>保持後半部是前半部的相反數</strong></p>
 <p>遞迴下去之後，<span class="math inline">\(X = [\omega_{\frac n 2}^0, \omega_{\frac n 2}^1, \dots, \omega_{\frac n 2}^{\frac n 2 -1}]\)</span>，依舊保證了這件事。</p>
 <h3 id="inverse-fft">Inverse FFT</h3>
 <p>前面有提到 FFT 可以看成矩陣相乘的過程，那個 <span class="math inline">\(n \times n\)</span> 的矩陣我們叫他 <span class="math inline">\(DFT\)</span> 矩陣。</p>
 <p>從點值找出係數的過程，就是左右乘上 <span class="math inline">\(DFT^{-1}\)</span>，而 <span class="math inline">\(DFT^{-1}\)</span> 長這樣：</p>
-<p><span class="math display">\[\begin{bmatrix}
+<div>
+<p><span class="math display">\[
+\begin{bmatrix}
 \omega_0^0 &amp; \omega_0^{-1} &amp; \dots &amp; \omega_0^{-(n-1)}\\
 \omega_1^0 &amp; \omega_1^{-1} &amp; \dots &amp; \omega_1^{-(n-1)}\\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
 \omega_{n-1}^0 &amp; \omega_{n-1}^{-1} &amp; \dots &amp; \omega_{n-1}^{-(n-1)}\\
-\end{bmatrix}\]</span></p>
+\end{bmatrix}
+\]</span></p>
+</div>
 <p>就是每個元素都倒數，原因我不是很清楚。</p>
 <h3 id="實作">實作</h3>
-<p><span class="math display">\[\omega_n^k = cos \frac{2 \pi k}{n} + sin \frac{2 \pi k}{n}i\]</span></p>
+<div>
+<p><span class="math display">\[
+\omega_n^k = cos \frac{2 \pi k}{n} + sin \frac{2 \pi k}{n}i
+\]</span></p>
+</div>
 <p>這很容易在複數平面上看端倪。</p>
 <p>實作時就用這個公式及 C++ 內建的 Complex 處理即可。</p>
 
@@ -322,7 +362,10 @@ P_{odd} = [P_1, P_3, \dots, P_{n-1}]\\\]</span></p>
     <a href="/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-639-Hello-Weird-Music-Sheet/" rel="prev" title="【題解】TOJ 639. Hello, Weird Music Sheet!">
       <i class="fa fa-chevron-left"></i> 【題解】TOJ 639. Hello, Weird Music Sheet!
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/11/09/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -397,7 +440,7 @@ P_{odd} = [P_1, P_3, \dots, P_{n-1}]\\\]</span></p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
