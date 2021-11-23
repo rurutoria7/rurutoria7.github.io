@@ -156,6 +156,435 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-637-%E6%9C%AC%E7%94%B0%E5%B0%8F%E7%8B%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-637-%E6%9C%AC%E7%94%B0%E5%B0%8F%E7%8B%BC/" class="post-title-link" itemprop="url">【題解】TOJ 637. 本田小狼</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-28 10:32:34" itemprop="dateCreated datePublished" datetime="2021-09-28T10:32:34+08:00">2021-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-11-16 11:38:24" itemprop="dateModified" datetime="2021-11-16T11:38:24+08:00">2021-11-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="題意"> 題意</h2>
+<p>給一顆有根樹。多次詢問 <span class="math inline">\(p\)</span>、<span class="math inline">\(k\)</span>，求 <span class="math inline">\(p\)</span> 的子樹往下最多走 <span class="math inline">\(k\)</span> 步可以到達幾個節點。</p>
+<h2 id="觀察">觀察</h2>
+<p>若從 <span class="math inline">\(u\)</span> 往下走 <span class="math inline">\(k\)</span> 步可以到達 <span class="math inline">\(v\)</span>，等價於 <span class="math inline">\(d[v] \le d[u]+k\)</span>。題目相當於詢問 <span class="math inline">\(u\)</span> 子樹內有多少子節點深度 <span class="math inline">\(\le d[u]+k\)</span>。</p>
+<h2 id="作法">作法</h2>
+<h3 id="區間查詢-x-數量">區間查詢 <span class="math inline">\(x\)</span> 數量</h3>
+<p>給你一個序列 <span class="math inline">\(a\)</span>，多筆查詢 <span class="math inline">\(\le k\)</span> 的數字有多少。我們可以對值域開一個序列上的資料結構 <span class="math inline">\(cnt\)</span>，當出現值為 <span class="math inline">\(x\)</span> 的元素就 <span class="math inline">\(cnt[x]++\)</span>，查詢時答案就是 <span class="math inline">\(cnt[1]+...+cnt[k]\)</span>。</p>
+<p>進階一點，給你一個序列 <span class="math inline">\(a\)</span>，多筆區間查詢 <span class="math inline">\(\le k\)</span> 的數字有多少。只要我們能只把 <span class="math inline">\(a[l], a[l+1], ..., a[r]\)</span> 放進資料結構，就能用同樣的方式查詢。</p>
+<p>如果序列只有一種值，那等於只要 <span class="math inline">\(r\)</span> 時有多少個減 <span class="math inline">\(l\)</span> 時有多少個就可以得出答案。推廣到整個序列的很多種值，我們只要每個資料結構的每個位置相減就行：把 <span class="math inline">\(a[i]\)</span> 放進陣列後，我們紀錄現在的 <span class="math inline">\(cnt\)</span> 為 <span class="math inline">\(cnt_i\)</span>，當只要 <span class="math inline">\(a[l], a[l+1], ..., a[r]\)</span> 放進陣列的結果，就把 <span class="math inline">\(cnt_r\)</span> 跟 <span class="math inline">\(cnt_l\)</span> 的每個元素相減得到 <span class="math inline">\(cnt_p\)</span> 。</p>
+<p>我們的 <span class="math inline">\(cnt\)</span> 以持久化線段樹實作，支援單點修改、查詢版本 <span class="math inline">\(i\)</span> 下的區間和。</p>
+<h4 id="持久化線段樹">持久化線段樹</h4>
+<p>因為每次修改只會更動 <span class="math inline">\(logn\)</span> 個值，我們只要紀錄被更改的節點就好。</p>
+<p>對於每次修改我們想像開一顆新的線段樹作為最新的版本，但是子樹若長得完全ㄧ樣就指回去上個版本。</p>
+<p>實作要注意：</p>
+<ul>
+<li>修改時必須回傳新的節點</li>
+<li>若子樹一樣必須指回去上個版本</li>
+<li>從外面呼叫修改時，要拿一個陣列儲存新的線段樹的根</li>
+<li>可以不用事先 build，全部指到 <span class="math inline">\(0\)</span></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> root[N];</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Seg</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> tr[N&lt;&lt;<span class="number">5</span>], lc[N&lt;&lt;<span class="number">5</span>], rc[N&lt;&lt;<span class="number">5</span>], ptr;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">modify</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> i, <span class="keyword">int</span> x, <span class="keyword">int</span> l=<span class="number">1</span>, <span class="keyword">int</span> r=n)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rt = ++ptr;</span><br><span class="line">        lc[rt] = lc[u], rc[rt] = rc[u], tr[rt] = tr[u];</span><br><span class="line">        <span class="keyword">if</span> (l == r)&#123;</span><br><span class="line">            tr[rt] += x;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> m = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (i &lt;= m) lc[rt] = <span class="built_in">modify</span>(lc[u],i,x,l,m);</span><br><span class="line">            <span class="keyword">if</span> (m &lt; i)  rc[rt] = <span class="built_in">modify</span>(rc[u],i,x,m+<span class="number">1</span>,r);</span><br><span class="line">            tr[rt] = tr[lc[rt]] + tr[rc[rt]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> rt;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">query</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> ql, <span class="keyword">int</span> qr, <span class="keyword">int</span> l=<span class="number">1</span>, <span class="keyword">int</span> r=n)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (ql&lt;=l &amp;&amp; r&lt;=qr)&#123;</span><br><span class="line">            <span class="keyword">return</span> tr[u];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> m = (l+r)&gt;&gt;<span class="number">1</span>, ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (ql&lt;=m) ans += <span class="built_in">query</span>(lc[u],ql,qr,l,m);</span><br><span class="line">        <span class="keyword">if</span> (m&lt;qr) ans += <span class="built_in">query</span>(rc[u],ql,qr,m+<span class="number">1</span>,r);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; st;</span><br></pre></td></tr></table></figure>
+<h3 id="樹壓平">樹壓平</h3>
+<p>題目都是查詢子樹，因此只要保證子樹在連續區間內，就能套用上面的方法。</p>
+<p>dfs 進去時紀錄 <span class="math inline">\(tin[u] = ++time\)</span>，出來時紀錄 <span class="math inline">\(tout[u] = ++time\)</span>。因為一定子樹走完才會出來，因此子樹一定被 <span class="math inline">\(tin[u]\)</span> 和 <span class="math inline">\(tout[u]\)</span> 夾住。</p>
+<p>有個優化的方式，出來時不佔用另一個 <span class="math inline">\(time\)</span>，就讓多個 <span class="math inline">\(tout\)</span> 指在同一個地方，如此序列大小減半且答案不需要除以 <span class="math inline">\(2\)</span>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> dseq[N], tin[N], tout[N], tim;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> fa, <span class="keyword">int</span> d)</span></span>&#123;</span><br><span class="line">    tin[u] = ++tim;</span><br><span class="line">    dseq[tin[u]] = d;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> v: G[u])&#123;</span><br><span class="line">        <span class="keyword">if</span> (v == fa) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="built_in">dfs</span>(v,u,d+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    tout[u] = tim;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ac-code">AC Code</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e6</span>+<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n, q;</span><br><span class="line">vector&lt;<span class="keyword">int</span>&gt; G[N];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> dseq[N], tin[N], tout[N], tim;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> fa, <span class="keyword">int</span> d)</span></span>&#123;</span><br><span class="line">    tin[u] = ++tim;</span><br><span class="line">    dseq[tin[u]] = d;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> v: G[u])&#123;</span><br><span class="line">        <span class="keyword">if</span> (v == fa) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="built_in">dfs</span>(v,u,d+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    tout[u] = tim;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> root[N];</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Seg</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> tr[N&lt;&lt;<span class="number">5</span>], lc[N&lt;&lt;<span class="number">5</span>], rc[N&lt;&lt;<span class="number">5</span>], ptr;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">modify</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> i, <span class="keyword">int</span> x, <span class="keyword">int</span> l=<span class="number">1</span>, <span class="keyword">int</span> r=n)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rt = ++ptr;</span><br><span class="line">        lc[rt] = lc[u], rc[rt] = rc[u], tr[rt] = tr[u];</span><br><span class="line">        <span class="keyword">if</span> (l == r)&#123;</span><br><span class="line">            tr[rt] += x;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> m = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (i &lt;= m) lc[rt] = <span class="built_in">modify</span>(lc[u],i,x,l,m);</span><br><span class="line">            <span class="keyword">if</span> (m &lt; i)  rc[rt] = <span class="built_in">modify</span>(rc[u],i,x,m+<span class="number">1</span>,r);</span><br><span class="line">            tr[rt] = tr[lc[rt]] + tr[rc[rt]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> rt;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">query</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> ql, <span class="keyword">int</span> qr, <span class="keyword">int</span> l=<span class="number">1</span>, <span class="keyword">int</span> r=n)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (ql&lt;=l &amp;&amp; r&lt;=qr)&#123;</span><br><span class="line">            <span class="keyword">return</span> tr[u];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> m = (l+r)&gt;&gt;<span class="number">1</span>, ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (ql&lt;=m) ans += <span class="built_in">query</span>(lc[u],ql,qr,l,m);</span><br><span class="line">        <span class="keyword">if</span> (m&lt;qr) ans += <span class="built_in">query</span>(rc[u],ql,qr,m+<span class="number">1</span>,r);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; st;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    minamisan</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">2</span>,n)&#123;</span><br><span class="line">        <span class="keyword">int</span> u, v;</span><br><span class="line">        cin &gt;&gt; u &gt;&gt; v;</span><br><span class="line">        G[u].<span class="built_in">pb</span>(v);</span><br><span class="line">        G[v].<span class="built_in">pb</span>(u);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dfs</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">1</span>,n)&#123;</span><br><span class="line">        root[i] = st.<span class="built_in">modify</span>(root[i<span class="number">-1</span>],dseq[i],<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    cin &gt;&gt; q;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">1</span>,q)&#123;</span><br><span class="line">        <span class="keyword">int</span> p, k;</span><br><span class="line">        cin &gt;&gt; p &gt;&gt; k;</span><br><span class="line">        cout &lt;&lt; (st.<span class="built_in">query</span>(root[tout[p]],<span class="number">1</span>,k+dseq[tin[p]])-st.<span class="built_in">query</span>(root[tin[p]<span class="number">-1</span>],<span class="number">1</span>,k+dseq[tin[p]])) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/27/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-638-%E9%81%9E%E5%9B%9E%E5%91%80%E9%81%9E%E5%9B%9E/" class="post-title-link" itemprop="url">【題解】TOJ 638. 遞回呀遞回</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-27 15:55:45" itemprop="dateCreated datePublished" datetime="2021-09-27T15:55:45+08:00">2021-09-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-11-16 11:40:07" itemprop="dateModified" datetime="2021-11-16T11:40:07+08:00">2021-11-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="題意">題意</h2>
+<p><span class="math inline">\(a, b, c, r_0, r_1, n, p\)</span> 和遞迴關係式 <span class="math inline">\(r_{i+2} = a \cdot r_{i+1} \cdot r_i + b \cdot r_{i+1} + c \cdot r_i\)</span>，求 <span class="math inline">\(r_n \mod p\)</span></p>
+<ul>
+<li><span class="math inline">\(n \le 10^{18}\)</span></li>
+<li><span class="math inline">\(p \le 10^4\)</span></li>
+</ul>
+<h2 id="觀察">觀察</h2>
+<ul>
+<li>因為有 <span class="math inline">\(r_{i+1} \cdot r_i\)</span>，不能用矩陣快速冪</li>
+<li>只會用到前兩項</li>
+<li><span class="math inline">\(p \le 10^4\)</span>，因此前兩項的可能性不超過 <span class="math inline">\(10^8\)</span> 種</li>
+</ul>
+<h2 id="作法">作法</h2>
+<p>當只要出現兩項 <span class="math inline">\({f[i-1],f[i]}\)</span> 曾經出現過，就代表接下來會循環： <span class="math inline">\(A, B, C, ..., X, ..., X, ..., X...\)</span></p>
+<p>我們紀錄第一次循環出現的位置和循環節長度，若 <span class="math inline">\(n\)</span> 在循環出現前可以直接回答，否則計算出 <span class="math inline">\(n\)</span> 在循環節中的哪個位置再回答。</p>
+<h2 id="ac-code">AC Code</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">5e7</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a, b, c, r0, r1, n, p;</span><br><span class="line"><span class="keyword">int</span> f[N];</span><br><span class="line">map&lt;pii,<span class="keyword">int</span>&gt; mp; <span class="comment">//&#123;&#123;f[i-1], f[i]&#125;, i&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cin &gt;&gt; a &gt;&gt; b &gt;&gt; c &gt;&gt; f[<span class="number">0</span>] &gt;&gt; f[<span class="number">1</span>] &gt;&gt; n &gt;&gt; p;</span><br><span class="line">    a%=p, b%=p, c%=p, f[<span class="number">0</span>]%=p, f[<span class="number">1</span>]%=p;</span><br><span class="line">    mp[&#123;f[<span class="number">0</span>],f[<span class="number">1</span>]&#125;] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> op, len;</span><br><span class="line">    <span class="built_in">rep</span>(i,<span class="number">2</span>,N)&#123;</span><br><span class="line">        f[i] = ((a*f[i<span class="number">-1</span>]*f[i<span class="number">-2</span>]%p + b*f[i<span class="number">-1</span>]%p + c*f[i<span class="number">-2</span>]%p)%p+p)%p;</span><br><span class="line">        <span class="keyword">if</span> (mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] != <span class="number">0</span>)&#123;</span><br><span class="line">            op = mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;];</span><br><span class="line">            len = i - op;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mp[&#123;f[i<span class="number">-1</span>],f[i]&#125;] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= op+len) cout &lt;&lt; f[n] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> cout &lt;&lt; f[(n-op)%len+op] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/" class="post-title-link" itemprop="url">【模板】KMP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-25 16:18:43" itemprop="dateCreated datePublished" datetime="2021-09-25T16:18:43+08:00">2021-09-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-11-24 00:02:54" itemprop="dateModified" datetime="2021-11-24T00:02:54+08:00">2021-11-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>KMP 用在字串匹配，可以在字串 <span class="math inline">\(S\)</span> 中找到哪些地方出現過字串 <span class="math inline">\(P\)</span>。</p>
+<p>核心思想是優化樸素的字串匹配過程。匹配可以視作，每個位移過後的 <span class="math inline">\(P\)</span>，有哪些與對應的 <span class="math inline">\(S\)</span> 子字串相等：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">S  AABAABAAC</span><br><span class="line">P1 AABAAc</span><br><span class="line">P2  Aabaac</span><br><span class="line">P3   aabaac</span><br><span class="line">P4 	  AABAAC</span><br><span class="line">每個都匹配到失敗為止，並且從匹配失敗之後用小寫表示</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>在匹配過程中，想辦法跳過會更早失敗的 <span class="math inline">\(P\)</span>。</strong></li>
+</ul>
+<p>在匹配過程中，有時會失敗在某個地方，如在第 1 次匹配中 <span class="math inline">\(S[4] \ne P[4]\)</span>。 第 2和第 3 次匹配，會在更早的地方失敗。我們想直接跳過 2、3 次匹配。 要找到下一個至少不會在 <span class="math inline">\(i&lt;4\)</span> 就匹配失敗的。 可以發現，這相當於把 <span class="math inline">\(P\)</span> 字串位移直到其次長前綴 = 匹配失敗前的後綴（最長就根本沒位移）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">P1 AAB[AA]c</span><br><span class="line">P4 	  [AA]BAAC</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>訂定函數 <span class="math inline">\(f(i)\)</span>，代表 <span class="math inline">\(P[0,i)\)</span> 次長共同前後綴長度（最長但不包括 <span class="math inline">\(P[0,i)\)</span> 本身）</strong></li>
+</ul>
+<p>上面的想法，相當於以 <span class="math inline">\(i\)</span> <span class="math inline">\(j\)</span> 兩個指針來匹配 <span class="math inline">\(S\)</span> 和 <span class="math inline">\(P\)</span>，一但失敗就使 <span class="math inline">\(j\)</span> 回到最次長前綴。 定義 <span class="math inline">\(f(i)\)</span> 可以方便地做到這件事。</p>
+<ul>
+<li>轉移：<span class="math inline">\(f(i+1) = f(j)+1,\ P[j] = P[i]\)</span></li>
+</ul>
+<figure>
+<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954akyjpj30k6076q33.jpg" alt="image-20211109190643981" /><figcaption aria-hidden="true">image-20211109190643981</figcaption>
+</figure>
+<p>只要 <span class="math inline">\(P[f(i)] = P[i]\)</span>，則 <span class="math inline">\(f(i+1) = f(i)+1\)</span> 那如果不相等呢？也還有機會：</p>
+<figure>
+<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954bflk5j30k6076q33.jpg" alt="image-20211109192615200" /><figcaption aria-hidden="true">image-20211109192615200</figcaption>
+</figure>
+<p>因為 <span class="math inline">\(P[0, f(i)) = P[i-f(i),i)\)</span>，所以 <span class="math inline">\(P[0,f(f(i))) = P[i-f(f(i),i)\)</span>。 此時只要從 <span class="math inline">\(f(i)\)</span> 退到 <span class="math inline">\(f(f(i))\)</span>，再試試看就好了。</p>
+<ul>
+<li>基底：<span class="math inline">\(f(0) = -1,\ f(1) = 0\)</span></li>
+</ul>
+<p>顯然，<span class="math inline">\(f(1) = 0\)</span>。那 <span class="math inline">\(f(0)\)</span> 呢？ 在匹配過程中會出現 <span class="math inline">\(f(0)\)</span>，即是當 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配，而且還失敗的時候。 這時就直接放棄這個 <span class="math inline">\(S[i]\)</span>，從 <span class="math inline">\(S[i+1]\)</span> 和 <span class="math inline">\(P[0]\)</span> 開始重新匹配了。 我們令 <span class="math inline">\(f(0) = -1\)</span>，方便我們知道 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配失敗，該直接跳過了。實作時會體現 <span class="math inline">\(-1\)</span> 的方便性。</p>
+<p>以下是 <span class="math inline">\(f\)</span> 建表的實作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">f[<span class="number">0</span>]=<span class="number">-1</span>, f[<span class="number">1</span>]=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>,j; i&lt;p.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (j=f[i]; j&gt;=<span class="number">0</span> &amp;&amp; p[j]!=p[i]; j=f[j]);</span><br><span class="line">    f[i+<span class="number">1</span>] = j+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>以 <span class="math inline">\(i\)</span> 遍歷 <span class="math inline">\(S\)</span>，<span class="math inline">\(j\)</span> 遍歷 <span class="math inline">\(P\)</span>，對於每個 <span class="math inline">\(i\)</span> 找到第一個與其匹配的 <span class="math inline">\(j\)</span></li>
+</ul>
+<p>匹配 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j\)</span> 一但成功，就能幫下個 <span class="math inline">\(i\)</span> 找匹配的 <span class="math inline">\(j\)</span>。 否則，就找到下一個可能與 <span class="math inline">\(i\)</span> 匹配的 <span class="math inline">\(P\)</span>。 另外，當 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j=0\)</span> 匹配失敗，就 <span class="math inline">\(i++,j=0\)</span>。</p>
+<p>出現完全成功配對的條件，是過程中發生，<span class="math inline">\(i=|S|-1\)</span> 和 <span class="math inline">\(j=|P|-1\)</span> 匹配成功。 下層迴圈中 <span class="math inline">\(j = |P|\)</span>，必須使 <span class="math inline">\(j = f[j]\)</span>。實作用到了一個細節是，<code>p[p.size()]</code> 會拿到 <code>p.end()</code>，所以不用擔心 RE。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>; i&lt;s.<span class="built_in">size</span>(); i++,j++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> (j&gt;=<span class="number">0</span> &amp;&amp; s[i]!=p[j]) j = f[j];</span><br><span class="line">    <span class="keyword">if</span> (j == p.<span class="built_in">size</span>()<span class="number">-1</span>) ans++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E9%80%A3%E9%80%9A%E5%88%86%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E9%80%A3%E9%80%9A%E5%88%86%E9%87%8F/" class="post-title-link" itemprop="url">【模板】連通分量</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-25 16:18:43" itemprop="dateCreated datePublished" datetime="2021-09-25T16:18:43+08:00">2021-09-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-11-16 11:39:46" itemprop="dateModified" datetime="2021-11-16T11:39:46+08:00">2021-11-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong><em>本篇尚在施工中</em></strong></p>
+<h2 id="名詞解釋">名詞解釋</h2>
+<ul>
+<li><p>連通分量：數量最多、擴展範圍最大</p></li>
+<li><p>割點：把這個點拔掉會增加連通塊數量</p></li>
+<li><p>橋：把這個邊拔掉會增加連通塊數量</p></li>
+<li><p>無向連通分量</p>
+<ul>
+<li>橋連通分量（邊雙連通分量）：一個連通分量內，拔掉任一點連通塊數量不會增加</li>
+<li>點雙連通分量：一個連通分量內，拔掉任一邊連通塊數量不會增加</li>
+</ul></li>
+<li><p>有向圖連通分量</p>
+<ul>
+<li>強連通分量：一個連通分量內，a 能到 b、b 能到 a</li>
+</ul></li>
+</ul>
+<h2 id="dfs-tree">DFS Tree</h2>
+<p>把一張圖 DFS，邊可以分成四種：</p>
+<ul>
+<li>Tree Edge：DFS 過程中經過的邊。DFS 時，走向沒走過的臨點的鄰邊都是 Tree Edge。</li>
+<li>Back Edge：通向祖先的鄰邊。</li>
+<li>Forward Edge：不再 DFS Tree 上，通向子樹的鄰邊。</li>
+<li>Cross Edge：通向不存在父子關係的點的鄰邊。</li>
+</ul>
+<p>在 DFS 時，遇到走訪過的邊就是下面三種之一。 並且無向圖只存在 Tree Edge 和 Back Edge（Forward Edge 因為無向等同於 Back Edge；u 若存在 Cross Edge 連到 v，那在 v 時就應改把這條邊當成 Tree Edge）。所以討論連通的時候，只需要討論子孫和祖先的關係。</p>
+<h2 id="tarjans-bcc">Tarjan's BCC</h2>
+<h3 id="割點">割點</h3>
+<p>在 DFS Tree 上當一個點被拔掉，子孫還想要跟祖先點互通有無，那就只能透過 Back Edge 了。 如果這個子樹中有一條 Back Edge 可以回到任一個祖先，那點被拔掉就不會影響該子樹根祖先互通。 反之若其中一個子樹不存在 Back Edge 可以連回祖先，那該點就是割點。</p>
+<ul>
+<li>low 函數</li>
+</ul>
+<p>我們可以記錄該點的子孫通過 Back Edge 最上面可以連到哪裡，這樣祖先們都能用它該點是否可以走到自己上面。我們稱它為 <span class="math inline">\(low(u)\)</span>。 當走 Tree Edge 到子節點，可以直接拿他的 <span class="math inline">\(low\)</span>；或是走 Back Edge 到祖先，則拿他的深度。</p>
+<ul>
+<li>特判根</li>
+</ul>
+<p>沒有人可以透過 Back Edge 走到根上面。根是割點，若且唯若根有兩個以上的子節點。</p>
+<h4 id="tarjan-求割點實作">Tarjan 求割點實作</h4>
+<ol type="1">
+<li>維護 dep、low</li>
+<li>檢查該點是否為割點，特判根。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; G[N];</span><br><span class="line"><span class="keyword">int</span> isap[N], low[N], dep[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> p)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> child = <span class="number">0</span>;</span><br><span class="line">    low[u] = dep[u] = low[p]++;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> v: G[u])&#123;</span><br><span class="line">        <span class="keyword">if</span> (v == p) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">if</span> (dep[v])&#123;</span><br><span class="line">            low[u] = <span class="built_in">min</span>(low[u], dep[v]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">dfs</span>(v,u);</span><br><span class="line">            child++;</span><br><span class="line">            low[u] = <span class="built_in">min</span>(low[u], low[v]);</span><br><span class="line">            <span class="keyword">if</span> (low[v] &gt;= dep[u])&#123;</span><br><span class="line">                isap[u] = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (u==p &amp;&amp; child&lt;=<span class="number">1</span>) isap[u] = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="點雙連通分量">點雙連通分量</h3>
+<p>維護一個 stack，我後面都是子孫並且跟我是同一個 BCC。 如果我是這個 BCC 裏最淺的點，就把我以後的東西都 pop 出來，作為我 BCC 裡面的點。 如果該點是割點，記得放回去（最淺的那個點一定是割點），因為割點還會屬於其他 BCC。</p>
+<p>當沒有兒子的時候需要特判。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; G[N];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> low[N], dep[N], n, m, bcnt;</span><br><span class="line">vector&lt;<span class="keyword">int</span>&gt; st, memb[N];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> p)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (u == p &amp;&amp; G[u].<span class="built_in">size</span>()&lt;<span class="number">1</span>)&#123;</span><br><span class="line">        memb[bcnt++].<span class="built_in">pb</span>(u);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    low[u] = dep[u] = dep[p]+<span class="number">1</span>;</span><br><span class="line">    st.<span class="built_in">pb</span>(u);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> v: G[u])&#123;</span><br><span class="line">        <span class="keyword">if</span> (v == p) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">if</span> (dep[v])&#123;</span><br><span class="line">            low[u] = <span class="built_in">min</span>(low[u], dep[v]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">dfs</span>(v,u);</span><br><span class="line">            low[u] = <span class="built_in">min</span>(low[u], low[v]);</span><br><span class="line">            <span class="keyword">if</span> (low[v] &gt;= dep[u])&#123;</span><br><span class="line">                bcnt++;</span><br><span class="line">                <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">                    memb[bcnt].<span class="built_in">pb</span>(st.<span class="built_in">back</span>());</span><br><span class="line">                    <span class="keyword">if</span> (st.<span class="built_in">back</span>() == u) <span class="keyword">break</span>;</span><br><span class="line">                    st.<span class="built_in">pop_back</span>();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="橋">橋</h3>
+<p>當一條走往子樹的邊被拔掉，子樹還想跟自己互通，就要有一條 Back Edge 連到自己或祖先。</p>
+<h4 id="實作">實作</h4>
+<ol type="1">
+<li>維護 dep、low</li>
+<li>確認連向子樹的邊是不是橋（子樹有沒有任一個節點有 Back Edge 連回自己或祖先）</li>
+<li>子節點只要不走過來的邊就行</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; G[N];</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Edge</span> &#123;</span><span class="keyword">int</span> u, v;&#125;;</span><br><span class="line">vector&lt;Edge&gt; edges;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add_edge</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	G[u].<span class="built_in">pb</span>(edges.<span class="built_in">size</span>());</span><br><span class="line">	edges.<span class="built_in">pb</span>(&#123;u,v&#125;);</span><br><span class="line">	G[v].<span class="built_in">pb</span>(edges.<span class="built_in">size</span>());</span><br><span class="line">	edges.<span class="built_in">pb</span>(&#123;v,u&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> d[N], l[N], timestamp, bridge_cnt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tarjan</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> from)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	d[u] = l[u] = ++timestamp;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> e: G[u])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> v = edges[e].v;</span><br><span class="line">		<span class="keyword">if</span> (!d[v])</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">tarjan</span>(v,e^<span class="number">1</span>);</span><br><span class="line">			l[u] = <span class="built_in">min</span>(l[u], l[v]);	</span><br><span class="line">			<span class="keyword">if</span> (l[v] &gt; d[u])</span><br><span class="line">			&#123;</span><br><span class="line">				bridge_cnt++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (e!=from)</span><br><span class="line">		&#123;</span><br><span class="line">			l[u] = <span class="built_in">min</span>(l[u], d[v]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="橋雙連通">橋雙連通</h4>
+<h2 id="kosaraju">Kosaraju</h2>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/21/Hexo-Github-Pages-%E6%9E%B6%E7%AB%99%E7%AD%86%E8%A8%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -361,7 +790,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
