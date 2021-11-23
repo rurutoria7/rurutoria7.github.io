@@ -24,14 +24,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="【題解】TOJ 639. Hello, Weird Music Sheet!">
 <meta property="og:url" content="https://rurutoria7.github.io/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-639-Hello-Weird-Music-Sheet/index.html">
-<meta property="og:site_name" content="總有一天會用到的誤導向筆記">
+<meta property="og:site_name" content="總有一天會用到的筆記">
 <meta property="og:description" content="題意 給定 \(n\)，求有多少種 \(a\) 使 \(a_1 \le a_2 \ge a_3 \le a_4 ...a_n\) 且 \(0 \le a_i \le 11\)。  \(n \le 10^{18}\)  觀察  可以考慮 DP，設 \(dp[i][j]\) 為當 \(a_{i+1} &#x3D; j\)，\(a_1 \ldots a_i\) 有多少種可能性 轉移：  \[ dp_{i,j} &#x3D;">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2021-09-28T03:55:29.000Z">
-<meta property="article:modified_time" content="2021-09-29T11:31:29.776Z">
+<meta property="article:modified_time" content="2021-11-16T03:39:59.064Z">
 <meta property="article:author" content="rurutoria7">
-<meta property="article:tag" content="DP">
 <meta property="article:tag" content="題解">
+<meta property="article:tag" content="動態規劃">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://rurutoria7.github.io/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-639-Hello-Weird-Music-Sheet/">
@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title>【題解】TOJ 639. Hello, Weird Music Sheet! | 總有一天會用到的誤導向筆記</title>
+  <title>【題解】TOJ 639. Hello, Weird Music Sheet! | 總有一天會用到的筆記</title>
   
 
 
@@ -98,10 +98,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">總有一天會用到的誤導向筆記</h1>
+      <h1 class="site-title">總有一天會用到的筆記</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">記性很差，學過就忘；智商低落，囫圇吞棗。本站為減緩上述疑難雜症誕生。由於筆者能力限制，本站不保證內容正確性。</p>
+      <p class="site-subtitle" itemprop="description">本站為減緩筆者下列疑難雜症誕生：記性很差，學過就忘；智商低落，囫圇吞棗。</p>
   </div>
 
   <div class="site-nav-right">
@@ -172,7 +172,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="總有一天會用到的誤導向筆記">
+      <meta itemprop="name" content="總有一天會用到的筆記">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -193,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-09-29 19:31:29" itemprop="dateModified" datetime="2021-09-29T19:31:29+08:00">2021-09-29</time>
+                <time title="修改時間：2021-11-16 11:39:59" itemprop="dateModified" datetime="2021-11-16T11:39:59+08:00">2021-11-16</time>
               </span>
 
           
@@ -285,8 +285,8 @@ D_n &amp; = D_0 \times A_1 \times A_2 \times \ldots \times A_1 \\
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/DP/" rel="tag"># DP</a>
               <a href="/tags/%E9%A1%8C%E8%A7%A3/" rel="tag"># 題解</a>
+              <a href="/tags/%E5%8B%95%E6%85%8B%E8%A6%8F%E5%8A%83/" rel="tag"># 動態規劃</a>
           </div>
 
         
@@ -376,7 +376,7 @@ D_n &amp; = D_0 \times A_1 \times A_2 \times \ldots \times A_1 \\
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -389,7 +389,7 @@ D_n &amp; = D_0 \times A_1 \times A_2 \times \ldots \times A_1 \\
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

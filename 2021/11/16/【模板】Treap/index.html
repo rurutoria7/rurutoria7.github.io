@@ -20,22 +20,23 @@
     var CONFIG = {"hostname":"rurutoria7.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="【模板】KMP KMP 用在字串匹配，可以在字串 \(S\) 中找到哪些地方出現過字串 \(P\)。 核心思想是優化樸素的字串匹配過程。匹配可以視作，每個位移過後的 \(P\)，有哪些與對應的 \(S\) 子字串相等： 123456S  AABAABAACP1 AABAAcP2  AabaacP3   aabaacP4 	  AABAAC每個都匹配到失敗為止，並且從匹配失敗之後用小寫表示  在匹配">
+  <meta name="description" content="本篇尚在施工中...  Treap 可以做到很多酷酷的序列操作。本篇主要討論 Split&#x2F;Merge Treap。 基礎概念  key 決定左右順序，pri 值決定上下順序  Treap 是一棵二元樹，每個節點都包含 key 和 pri 值， 並且符合性質 1. 左子樹的 key 都小於自己，右子樹的 key 都大於自己；2. 子節點的 pri 都比父節點大 只要透過 key 和 pri 便能唯">
 <meta property="og:type" content="article">
-<meta property="og:title" content="總有一天會用到的誤導向筆記">
-<meta property="og:url" content="https://rurutoria7.github.io/2021/11/09/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/index.html">
-<meta property="og:site_name" content="總有一天會用到的誤導向筆記">
-<meta property="og:description" content="【模板】KMP KMP 用在字串匹配，可以在字串 \(S\) 中找到哪些地方出現過字串 \(P\)。 核心思想是優化樸素的字串匹配過程。匹配可以視作，每個位移過後的 \(P\)，有哪些與對應的 \(S\) 子字串相等： 123456S  AABAABAACP1 AABAAcP2  AabaacP3   aabaacP4 	  AABAAC每個都匹配到失敗為止，並且從匹配失敗之後用小寫表示  在匹配">
+<meta property="og:title" content="【模板】Treap">
+<meta property="og:url" content="https://rurutoria7.github.io/2021/11/16/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91Treap/index.html">
+<meta property="og:site_name" content="總有一天會用到的筆記">
+<meta property="og:description" content="本篇尚在施工中...  Treap 可以做到很多酷酷的序列操作。本篇主要討論 Split&#x2F;Merge Treap。 基礎概念  key 決定左右順序，pri 值決定上下順序  Treap 是一棵二元樹，每個節點都包含 key 和 pri 值， 並且符合性質 1. 左子樹的 key 都小於自己，右子樹的 key 都大於自己；2. 子節點的 pri 都比父節點大 只要透過 key 和 pri 便能唯">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1gw954akyjpj30k6076q33.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1gw954bflk5j30k6076q33.jpg">
-<meta property="article:published_time" content="2021-11-09T02:45:37.123Z">
-<meta property="article:modified_time" content="2021-11-09T12:39:15.569Z">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1gwh9ib7ao9j31io0n4n0e.jpg">
+<meta property="article:published_time" content="2021-11-16T03:37:03.000Z">
+<meta property="article:modified_time" content="2021-11-16T12:34:31.185Z">
 <meta property="article:author" content="rurutoria7">
+<meta property="article:tag" content="模板">
+<meta property="article:tag" content="資料結構">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1gw954akyjpj30k6076q33.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1gwh9ib7ao9j31io0n4n0e.jpg">
 
-<link rel="canonical" href="https://rurutoria7.github.io/2021/11/09/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/">
+<link rel="canonical" href="https://rurutoria7.github.io/2021/11/16/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91Treap/">
 
 
 <script id="page-configurations">
@@ -48,7 +49,7 @@
   };
 </script>
 
-  <title> | 總有一天會用到的誤導向筆記</title>
+  <title>【模板】Treap | 總有一天會用到的筆記</title>
   
 
 
@@ -99,10 +100,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">總有一天會用到的誤導向筆記</h1>
+      <h1 class="site-title">總有一天會用到的筆記</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">記性很差，學過就忘；智商低落，囫圇吞棗。本站為減緩上述疑難雜症誕生。由於筆者能力限制，本站不保證內容正確性。</p>
+      <p class="site-subtitle" itemprop="description">本站為減緩筆者下列疑難雜症誕生：記性很差，學過就忘；智商低落，囫圇吞棗。</p>
   </div>
 
   <div class="site-nav-right">
@@ -164,7 +165,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/11/09/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/11/16/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91Treap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -173,11 +174,11 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="總有一天會用到的誤導向筆記">
+      <meta itemprop="name" content="總有一天會用到的筆記">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          【模板】Treap
         </h1>
 
         <div class="post-meta">
@@ -188,7 +189,16 @@
               <span class="post-meta-item-text">發表於</span>
               
 
-              <time title="創建時間：2021-11-09 10:45:37 / 修改時間：20:39:15" itemprop="dateCreated datePublished" datetime="2021-11-09T10:45:37+08:00">2021-11-09</time>
+              <time title="創建時間：2021-11-16 11:37:03 / 修改時間：20:34:31" itemprop="dateCreated datePublished" datetime="2021-11-16T11:37:03+08:00">2021-11-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
             </span>
 
           
@@ -202,42 +212,52 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="模板kmp">【模板】KMP</h1>
-<p>KMP 用在字串匹配，可以在字串 <span class="math inline">\(S\)</span> 中找到哪些地方出現過字串 <span class="math inline">\(P\)</span>。</p>
-<p>核心思想是優化樸素的字串匹配過程。匹配可以視作，每個位移過後的 <span class="math inline">\(P\)</span>，有哪些與對應的 <span class="math inline">\(S\)</span> 子字串相等：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">S  AABAABAAC</span><br><span class="line">P1 AABAAc</span><br><span class="line">P2  Aabaac</span><br><span class="line">P3   aabaac</span><br><span class="line">P4 	  AABAAC</span><br><span class="line">每個都匹配到失敗為止，並且從匹配失敗之後用小寫表示</span><br></pre></td></tr></table></figure>
+        <blockquote>
+<p>本篇尚在施工中...</p>
+</blockquote>
+<p>Treap 可以做到很多酷酷的序列操作。本篇主要討論 Split/Merge Treap。</p>
+<h2 id="基礎概念">基礎概念</h2>
 <ul>
-<li><strong>在匹配過程中，想辦法跳過會更早失敗的 <span class="math inline">\(P\)</span>。</strong></li>
+<li>key 決定左右順序，pri 值決定上下順序</li>
 </ul>
-<p>在匹配過程中，有時會失敗在某個地方，如在第 1 次匹配中 <span class="math inline">\(S[4] \ne P[4]\)</span>。 第 2和第 3 次匹配，會在更早的地方失敗。我們想直接跳過 2、3 次匹配。 要找到下一個至少不會在 <span class="math inline">\(i&lt;4\)</span> 就匹配失敗的。 可以發現，這相當於把 <span class="math inline">\(P\)</span> 字串位移直到其次長前綴 = 匹配失敗前的後綴（最長就根本沒位移）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">P1 AAB[AA]c</span><br><span class="line">P4 	  [AA]BAAC</span><br></pre></td></tr></table></figure>
+<p>Treap 是一棵二元樹，每個節點都包含 key 和 pri 值， 並且符合性質 1. 左子樹的 key 都小於自己，右子樹的 key 都大於自己；2. 子節點的 pri 都比父節點大</p>
+<p>只要透過 key 和 pri 便能唯一決定這棵樹的長相</p>
 <ul>
-<li><strong>訂定函數 <span class="math inline">\(f(i)\)</span>，代表 <span class="math inline">\(P[0,i)\)</span> 次長共同前後綴長度（最長但不包括 <span class="math inline">\(P[0,i)\)</span> 本身）</strong></li>
+<li>以透過 split(u,k) 和 merge(a,b) 操作樹</li>
 </ul>
-<p>上面的想法，相當於以 <span class="math inline">\(i\)</span> <span class="math inline">\(j\)</span> 兩個指針來匹配 <span class="math inline">\(S\)</span> 和 <span class="math inline">\(P\)</span>，一但失敗就使 <span class="math inline">\(j\)</span> 回到最次長前綴。 定義 <span class="math inline">\(f(i)\)</span> 可以方便地做到這件事。</p>
+<p>split(u,k) 將一棵 Treap 分成兩棵，其中一棵鍵值皆小於 k，另一棵鍵值皆大於 k merge(a,b) 將兩棵 Treap 合併，其中一棵鍵值皆小於 k，另一棵鍵值皆大於 k（和 split 為反操作）</p>
+<p>只要好好遵守函數定義，我們可以在不破壞 Treap 性質的條件下對他動手動腳：</p>
+<p>想要插入，就把一顆 treap 切開後，把東西塞進去，再 merge 回去 想要刪除，就把一顆 treap 切兩刀，丟掉中間，再 merge 回去</p>
 <ul>
-<li>轉移：<span class="math inline">\(f(i+1) = f(j)+1,\ P[j] = P[i]\)</span></li>
+<li>key 和 pri 塞入不同數字，樹的意義會不同。</li>
 </ul>
-<figure>
-<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954akyjpj30k6076q33.jpg" alt="image-20211109190643981" /><figcaption aria-hidden="true">image-20211109190643981</figcaption>
-</figure>
-<p>只要 <span class="math inline">\(P[f(i)] = P[i]\)</span>，則 <span class="math inline">\(f(i+1) = f(i)+1\)</span> 那如果不相等呢？也還有機會：</p>
-<figure>
-<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954bflk5j30k6076q33.jpg" alt="image-20211109192615200" /><figcaption aria-hidden="true">image-20211109192615200</figcaption>
-</figure>
-<p>因為 <span class="math inline">\(P[0, f(i)) = P[i-f(i),i)\)</span>，所以 <span class="math inline">\(P[0,f(f(i))) = P[i-f(f(i),i)\)</span>。 此時只要從 <span class="math inline">\(f(i)\)</span> 退到 <span class="math inline">\(f(f(i))\)</span>，再試試看就好了。</p>
+<p>key 和 pri 可以自己賦予意義，例如：</p>
+<p>key = index, pri = value：得到一顆笛卡爾樹。 key = value, pri = random：可以支援動態排序 key = index, pri = random, data = value：拿來維護序列（data 為無關乎樹的長相，節點內存的資料）</p>
 <ul>
-<li>基底：<span class="math inline">\(f(0) = -1,\ f(1) = 0\)</span></li>
+<li>採用隨機的 pri 值，防止退化</li>
 </ul>
-<p>顯然，<span class="math inline">\(f(1) = 0\)</span>。那 <span class="math inline">\(f(0)\)</span> 呢？ 在匹配過程中會出現 <span class="math inline">\(f(0)\)</span>，即是當 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配，而且還失敗的時候。 這時就直接放棄這個 <span class="math inline">\(S[i]\)</span>，從 <span class="math inline">\(S[i+1]\)</span> 和 <span class="math inline">\(P[0]\)</span> 開始重新匹配了。 我們令 <span class="math inline">\(f(0) = -1\)</span>，方便我們知道 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配失敗，該直接跳過了。實作時會體現 <span class="math inline">\(-1\)</span> 的方便性。</p>
-<p>以下是 <span class="math inline">\(f\)</span> 建表的實作：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">f[<span class="number">0</span>]=<span class="number">-1</span>, f[<span class="number">1</span>]=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>,j; i&lt;p.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (j=f[i]; j&gt;=<span class="number">0</span> &amp;&amp; p[j]!=p[i]; j=f[j]);</span><br><span class="line">    f[i+<span class="number">1</span>] = j+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不管是 split、merge、在樹上查找，複雜度都與深度相關。</p>
+<p>Treap 的精髓在於，採用隨機的 pri 值，使整顆樹的期望深度為 <span class="math inline">\(logn\)</span>，複雜度更好。</p>
 <ul>
-<li>以 <span class="math inline">\(i\)</span> 遍歷 <span class="math inline">\(S\)</span>，<span class="math inline">\(j\)</span> 遍歷 <span class="math inline">\(P\)</span>，對於每個 <span class="math inline">\(i\)</span> 找到第一個與其匹配的 <span class="math inline">\(j\)</span></li>
+<li>以維護 size 代替 key = index</li>
 </ul>
-<p>匹配 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j\)</span> 一但成功，就能幫下個 <span class="math inline">\(i\)</span> 找匹配的 <span class="math inline">\(j\)</span>。 否則，就找到下一個可能與 <span class="math inline">\(i\)</span> 匹配的 <span class="math inline">\(P\)</span>。 另外，當 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j=0\)</span> 匹配失敗，就 <span class="math inline">\(i++,j=0\)</span>。</p>
-<p>出現完全成功配對的條件，是過程中發生，<span class="math inline">\(i=|S|-1\)</span> 和 <span class="math inline">\(j=|P|-1\)</span> 匹配成功。 下層迴圈中 <span class="math inline">\(j = |P|\)</span>，必須使 <span class="math inline">\(j = f[j]\)</span>。實作用到了一個細節是，<code>p[p.size()]</code> 會拿到 <code>p.end()</code>，所以不用擔心 RE。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>; i&lt;s.<span class="built_in">size</span>(); i++,j++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> (j&gt;=<span class="number">0</span> &amp;&amp; s[i]!=p[j]) j = f[j];</span><br><span class="line">    <span class="keyword">if</span> (j == p.<span class="built_in">size</span>()<span class="number">-1</span>) ans++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>拿 Treap 來維護序列是很常見的用法，但想像一下插入節點的過程。 我們需要把插入位置前、後的 key 值都做改變，顯得非常麻煩。</p>
+<p>把 key 丟棄不用，反正只要再 split 和 merge 的時候，保證兩棵 treap 是不相交的連續區間，並且知道大小關係就好了。</p>
+<p>但把 key=index 丟棄之後，要怎麼知道這個節點是第幾個？ 維護每個節點的 size，這樣在搜下去的過程中，就能算出這個節點的 index</p>
+<p>如下圖，節點 3 的 index 為 6：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gwh9ib7ao9j31io0n4n0e.jpg" width=450></p>
+<h3 id="實作">實作</h3>
+<ul>
+<li>判斷當前節點是不是答案、要不要被包括進分割</li>
+</ul>
+<h3 id="動態排序">動態排序</h3>
+<ul>
+<li><code>get_rank(x)</code>，有幾個數字小於 <code>x</code>，每次插入、刪除自己找出目標位置</li>
+<li><code>insert(x)</code></li>
+<li><code>erase(x)</code></li>
+</ul>
+<h3 id="區間加值">區間加值</h3>
+<h3 id="區間反轉">區間反轉</h3>
 
     </div>
 
@@ -246,6 +266,10 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%A8%A1%E6%9D%BF/" rel="tag"># 模板</a>
+              <a href="/tags/%E8%B3%87%E6%96%99%E7%B5%90%E6%A7%8B/" rel="tag"># 資料結構</a>
+          </div>
 
         
 
@@ -256,7 +280,10 @@
     <a href="/2021/10/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B/" rel="prev" title="【模板】快速傅立葉變換">
       <i class="fa fa-chevron-left"></i> 【模板】快速傅立葉變換
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/11/16/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91CSES-1194-Monsters/" rel="next" title="【題解】CSES 1194. Monsters">
+      【題解】CSES 1194. Monsters <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -315,7 +342,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BFkmp"><span class="nav-number">1.</span> <span class="nav-text">【模板】KMP</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A4%8E%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">基礎概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%A6%E4%BD%9C"><span class="nav-number">1.1.</span> <span class="nav-text">實作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8B%95%E6%85%8B%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">動態排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%80%E9%96%93%E5%8A%A0%E5%80%BC"><span class="nav-number">1.3.</span> <span class="nav-text">區間加值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%80%E9%96%93%E5%8F%8D%E8%BD%89"><span class="nav-number">1.4.</span> <span class="nav-text">區間反轉</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -331,7 +358,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -344,7 +371,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
