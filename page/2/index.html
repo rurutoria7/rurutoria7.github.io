@@ -156,6 +156,334 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/10/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/10/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E5%BF%AB%E9%80%9F%E5%82%85%E7%AB%8B%E8%91%89%E8%AE%8A%E6%8F%9B/" class="post-title-link" itemprop="url">【模板】快速傅立葉變換</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-10-25 20:32:10" itemprop="dateCreated datePublished" datetime="2021-10-25T20:32:10+08:00">2021-10-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-12-06 15:10:36" itemprop="dateModified" datetime="2021-12-06T15:10:36+08:00">2021-12-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>樸素的多項式乘法，必須在 <span class="math inline">\(O(n^2)\)</span> 完成。</p>
+<p>我們可以透過 FFT 的協助，在 <span class="math inline">\(O(nlogn)\)</span> 時間內完成多項式乘法。</p>
+<h3 id="點值表達式">點值表達式</h3>
+<p>可以帶入至少 <span class="math inline">\(n\)</span> 個點來唯一表示 <span class="math inline">\(n-1\)</span> 次多項式。</p>
+<p>所以，<span class="math inline">\(n &gt; deg\ f(x)\)</span>，<span class="math inline">\(f(x)\)</span> 能以<strong>點值表達式</strong>表示為</p>
+<p><span class="math display">\[(x_0,f(x_0)), (x_1,f(x_1)), \dots, (x_{n-1},f(x_{n-1}))\]</span></p>
+<p>兩個點值表達式的乘法可以在 <span class="math inline">\(O(n)\)</span> 達成，<span class="math inline">\((fg)(x)\)</span> 可以被表示為：</p>
+<p><span class="math display">\[(x_0,f(x_0)g(x_0)), (x_1,f(x_1)g(x_1)), \dots, (x_{n-1},f(x_{n-1})g(x_{n-1}))\]</span></p>
+<p>記得取 <span class="math inline">\(n &gt; deg\ (fg)(x)\)</span></p>
+<p>因此對於多項式乘法，我們有了計畫：</p>
+<p><strong>係數表達式 <span class="math inline">\(\rightarrow\)</span> 點值表達式 <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(O(n)\)</span> 相乘 <span class="math inline">\(\rightarrow\)</span> 點值表達式 <span class="math inline">\(\rightarrow\)</span> 係數表達式</strong></p>
+<p>我們的瓶頸將會在，如何快速的做到係數表達式轉換點值表達式</p>
+<h2 id="fft">FFT</h2>
+<p>定義一個函數 <span class="math inline">\(FFT\)</span>，傳入 <span class="math inline">\(X_0, X_1, \dots, X_{n-1}\)</span> 和 <span class="math inline">\(n\)</span> 個係數 <span class="math inline">\(P_0, P_1, \dots, P_{n-1}\)</span>，可以計算出帶入 <span class="math inline">\(X\)</span> 的結果是多少。</p>
+<div>
+<p><span class="math display">\[
+FFT(X,P) =
+\begin{bmatrix}
+X_0^0 &amp; X_0^1 &amp; \dots &amp; X_0^{n-1}\\
+X_1^0 &amp; X_1^1 &amp; \dots &amp; X_1^{n-1}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+X_{n-1}^0 &amp; X_{n-1}^{1} &amp; \dots &amp; X_{n-1}^{n-1}
+\end{bmatrix}
+\begin{bmatrix}
+P_0\\
+P_1\\
+\vdots\\
+P_{n-1}\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+f(X_0)\\
+f(X_1)\\
+\vdots\\
+f(X_{n-1})\\
+\end{bmatrix}\]</span></p>
+</div>
+<p>為了減少計算量，我們可以利用偶函數的性質：<span class="math inline">\(f(x) = f(-x)\)</span>，只要帶入一個數字就能得到兩份結果：</p>
+<div>
+<p><span class="math display">\[
+\begin{aligned}
+f(x) &amp; = p_0x^0 + p_1x^1 + \dots + p_{n-1}x^{n-1}\\\\
+&amp; = (p_0x^0 + p_2x^2 + \dots + p_{n-2}^{n-2}) + x(p_1x^1 + p_3x^2 + \dots + p_{n-1}^{n-2})
+\end{aligned}\]</span></p>
+</div>
+<p>為了更方便觀察出遞迴的性質，以及 <span class="math inline">\(f(x)\)</span> 和 <span class="math inline">\(f(-x)\)</span> 的關係，可以這樣表示：</p>
+<div>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;f(x) = f_e(x^2) + xf_o(x^2)\\
+&amp;f(-x) = f_e(x) -xf_o(x^2)\\
+&amp;f_e(x) = p_0x^0 + p_2x^2 + \dots + p_{n-2}x^{\frac n 2 -1}\\
+&amp;f_o(x) = p_1x^0 + p_3x^2 + \dots + p_{n-1}x^{\frac n 2 -1}\\
+\end{aligned}
+\]</span></p>
+</div>
+<p>現在，只要算出 <span class="math inline">\(f(x)\)</span> 就能順便得到 <span class="math inline">\(f(-x)\)</span>。把後半的 <span class="math inline">\(X\)</span> 皆對應到前半的 <span class="math inline">\(X\)</span>，使他們互為相反數：</p>
+<div>
+<p><span class="math display">\[
+X_i = X_{i+\frac n 2}, i&lt;\frac n 2
+\]</span></p>
+</div>
+<p>這樣就有了 <span class="math inline">\(FFT\)</span> 函數的轉移，大概長這樣：</p>
+<div>
+<p><span class="math display">\[
+FFT(X,P) = merge( FFT(X_{half},P_{even}),\ FFT(X_{half},P_{odd}))
+\]</span></p>
+<p><span class="math display">\[
+X_{half} = [X_0, X_1, \dots, X_{\frac n 2-1}] \\
+P_{even} = [P_0, P_2, \dots, P_{n-2}] \\
+P_{odd} = [P_1, P_3, \dots, P_{n-1}] \\
+\]</span></p>
+</div>
+<p><span class="math inline">\(merge\)</span> 的地方，就是第 <span class="math inline">\(i\)</span> 項相加得到 <span class="math inline">\(f(X_i)\)</span>，相減得到 <span class="math inline">\(f(X_{i+\frac n 2})\)</span></p>
+<p>接著需要處理，<span class="math inline">\(X\)</span> 裡面究竟該放什麼，才能順利的遞迴下去。考慮：</p>
+<div>
+<p><span class="math display">\[
+X = [a_0, a_1, \dots, a_{n-1}]
+\]</span></p>
+</div>
+<p>遞迴下去會變成：</p>
+<div>
+<p><span class="math display">\[
+[a_0^2, a_1^2, \dots, a_{\frac n 2 -1}^2]
+\]</span></p>
+</div>
+<p>我們需要在遞迴的每一層都保證後半部是前半部的相反數，也就是 <span class="math inline">\(X_i = X_{i+\frac n 2}, i&lt;\frac n 2\)</span>。</p>
+<p>只考慮實數是不可能的，因為下一層是上一層的平方，不會是相反數。</p>
+<h3 id="單位複根">單位複根</h3>
+<p><img src="https://oi-wiki.org/math/poly/images/fft3.png" width=300></p>
+<p>定義 <span class="math inline">\(\omega_n^i\)</span> 為 <span class="math inline">\(x^n=1\)</span> 下的其中一個解，這樣的解有 <span class="math inline">\(n\)</span> 個，把單位圓等分，且有以下性質我們會用到的性質：</p>
+<div>
+<p><span class="math display">\[
+\omega_n^i = \omega_n^{i+\frac n 2}\\
+(\omega_n^i)^2 = \omega_{\frac n 2}^i
+\]</span></p>
+</div>
+<p>這兩個性質用<strong>n次單位根</strong>等分單位圓、複數相乘幅角相加可以說明</p>
+<p>直接取 <span class="math inline">\(X_i = \omega_n^i\)</span>，單位根的性質恰好符合我們的要求：<strong>保持後半部是前半部的相反數</strong></p>
+<p>遞迴下去之後，<span class="math inline">\(X = [\omega_{\frac n 2}^0, \omega_{\frac n 2}^1, \dots, \omega_{\frac n 2}^{\frac n 2 -1}]\)</span>，依舊保證了這件事。</p>
+<h3 id="inverse-fft">Inverse FFT</h3>
+<p>前面有提到 FFT 可以看成矩陣相乘的過程，那個 <span class="math inline">\(n \times n\)</span> 的矩陣我們叫他 <span class="math inline">\(DFT\)</span> 矩陣。</p>
+<p>從點值找出係數的過程，就是左右乘上 <span class="math inline">\(DFT^{-1}\)</span>，而 <span class="math inline">\(DFT^{-1}\)</span> 長這樣：</p>
+<div>
+<p><span class="math display">\[
+\begin{bmatrix}
+\omega_0^0 &amp; \omega_0^{-1} &amp; \dots &amp; \omega_0^{-(n-1)}\\
+\omega_1^0 &amp; \omega_1^{-1} &amp; \dots &amp; \omega_1^{-(n-1)}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+\omega_{n-1}^0 &amp; \omega_{n-1}^{-1} &amp; \dots &amp; \omega_{n-1}^{-(n-1)}\\
+\end{bmatrix}
+\]</span></p>
+</div>
+<p>就是每個元素都倒數，原因我不是很清楚。</p>
+<h3 id="實作">實作</h3>
+<div>
+<p><span class="math display">\[
+\omega_n^k = cos \frac{2 \pi k}{n} + sin \frac{2 \pi k}{n}i
+\]</span></p>
+</div>
+<p>這很容易在複數平面上看端倪。</p>
+<p>實作時就用這個公式及 C++ 內建的 Complex 處理即可。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-639-Hello-Weird-Music-Sheet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-639-Hello-Weird-Music-Sheet/" class="post-title-link" itemprop="url">【題解】TOJ 639. Hello, Weird Music Sheet!</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-28 11:55:29" itemprop="dateCreated datePublished" datetime="2021-09-28T11:55:29+08:00">2021-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-11-16 11:39:59" itemprop="dateModified" datetime="2021-11-16T11:39:59+08:00">2021-11-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="題意">題意</h2>
+<p>給定 <span class="math inline">\(n\)</span>，求有多少種 <span class="math inline">\(a\)</span> 使 <span class="math inline">\(a_1 \le a_2 \ge a_3 \le a_4 ...a_n\)</span> 且 <span class="math inline">\(0 \le a_i \le 11\)</span>。</p>
+<ul>
+<li><span class="math inline">\(n \le 10^{18}\)</span></li>
+</ul>
+<h2 id="觀察">觀察</h2>
+<ul>
+<li>可以考慮 DP，設 <span class="math inline">\(dp[i][j]\)</span> 為當 <span class="math inline">\(a_{i+1} = j\)</span>，<span class="math inline">\(a_1 \ldots a_i\)</span> 有多少種可能性</li>
+<li>轉移：</li>
+</ul>
+<p><span class="math display">\[
+dp_{i,j} =
+\begin{cases}
+\begin{aligned}
+&amp;dp_{i-1,0} + \ldots + dp_{i-1,j} &amp; \text{if } j \equiv 1 \mod{2}\\
+&amp;dp_{i-1,j} + \ldots + dp_{i-1,11} &amp; \text{else}
+\end{aligned}
+\end{cases}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(n\)</span> 很大想到可以用矩陣快速冪</li>
+<li>奇數-&gt;偶數 和 偶數-&gt;奇數的轉移式不同</li>
+</ul>
+<h2 id="作法">作法</h2>
+<p>把 <span class="math inline">\(dp_{i,0}\)</span> 到 <span class="math inline">\(dp_{i,11}\)</span> 合起來，再考慮線性遞迴： <span class="math display">\[
+D_i =
+\begin{bmatrix}
+dp_{i,0} &amp; dp_{i,1} &amp; dp_{i,2} &amp; \ldots &amp; dp_{i,11}
+\end{bmatrix}
+\]</span></p>
+<p>可以得到偶數項到奇數項的轉移矩陣為：</p>
+<p><span class="math display">\[
+A_1 =
+\begin{bmatrix}
+1 &amp; 1 &amp; 1 &amp; \ldots &amp; 1\\
+0 &amp; 1 &amp; 1 &amp; \ldots &amp; 1\\
+0 &amp; 0 &amp; 1 &amp; \ldots &amp; 1\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+0 &amp; 0 &amp; 0 &amp; \ldots &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>奇數項到偶數項的轉移矩陣：</p>
+<p><span class="math display">\[
+A_2 =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; \ldots &amp; 0\\
+1 &amp; 1 &amp; 0 &amp; \ldots &amp; 0\\
+1 &amp; 1 &amp; 1 &amp; \ldots &amp; 0\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+1 &amp; 1 &amp; 1 &amp; \ldots &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>則當 <span class="math inline">\(n\)</span> 為偶數： <span class="math display">\[
+\begin{aligned}
+D_n &amp; = D_0 \times A_1 \times A_2 \times \ldots \times A_2\\
+ &amp; = D_0 \times (A_1 \times A_2)^{\frac{n}{2}}
+\end{aligned}
+\]</span></p>
+<p>否則： <span class="math display">\[
+\begin{aligned}
+D_n &amp; = D_0 \times A_1 \times A_2 \times \ldots \times A_1 \\
+&amp; = D_0 \times (A_1 \times A_2)^{\lfloor \frac{n}{2} \rfloor} \times A_1
+\end{aligned}
+\]</span></p>
+<p>這樣我們就能矩陣快速冪了。</p>
+<p>這邊附上矩陣快速冪的模板：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mat</span>&#123;</span></span><br><span class="line">    vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt; v;</span><br><span class="line">    <span class="built_in">mat</span>()&#123;</span><br><span class="line">        v.<span class="built_in">resize</span>(N,vector&lt;<span class="keyword">int</span>&gt;(N));</span><br><span class="line">    &#125;</span><br><span class="line">    mat <span class="keyword">operator</span> * (mat y)&#123;</span><br><span class="line">        mat res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;N; i++)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;N; j++)&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k=<span class="number">0</span>; k&lt;N; k++)&#123;</span><br><span class="line">                    res.v[i][j] += v[i][k]*y.v[k][j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; I;</span><br><span class="line"></span><br><span class="line"><span class="function">mat <span class="title">qpow</span> <span class="params">(mat x, <span class="keyword">int</span> y)</span></span>&#123;</span><br><span class="line">    mat res = I;</span><br><span class="line">    <span class="keyword">for</span> (; y; y&gt;&gt;=<span class="number">1</span>,x=x*x)&#123;</span><br><span class="line">        <span class="keyword">if</span> (y&amp;<span class="number">1</span>)&#123;</span><br><span class="line">            res = res*x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ac-code">AC Code</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">12</span>, M = <span class="number">1e9</span>+<span class="number">7</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mat</span>&#123;</span></span><br><span class="line">    vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt; v;</span><br><span class="line">    <span class="built_in">mat</span>()&#123;</span><br><span class="line">        v.<span class="built_in">resize</span>(N,vector&lt;<span class="keyword">int</span>&gt;(N));</span><br><span class="line">    &#125;</span><br><span class="line">    mat <span class="keyword">operator</span> * (mat y)&#123;</span><br><span class="line">        mat res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;N; i++)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;N; j++)&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k=<span class="number">0</span>; k&lt;N; k++)&#123;</span><br><span class="line">                    res.v[i][j] += v[i][k]*y.v[k][j];</span><br><span class="line">                    res.v[i][j] %= M;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; A1, A2, D0, I;</span><br><span class="line"></span><br><span class="line"><span class="function">mat <span class="title">qpow</span> <span class="params">(mat x, <span class="keyword">int</span> y)</span></span>&#123;</span><br><span class="line">    mat res = I;</span><br><span class="line">    <span class="keyword">for</span> (; y; y&gt;&gt;=<span class="number">1</span>,x=x*x)&#123;</span><br><span class="line">        <span class="keyword">if</span> (y&amp;<span class="number">1</span>)&#123;</span><br><span class="line">            res = res*x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;N; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;N; j++)&#123;</span><br><span class="line">            A1.v[i][j] = (j&gt;=i);</span><br><span class="line">            A2.v[i][j] = (j&lt;=i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;N; i++)&#123;</span><br><span class="line">        I.v[i][i] = <span class="number">1</span>;</span><br><span class="line">        D0.v[<span class="number">0</span>][i] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    mat trans = <span class="built_in">qpow</span>(A1*A2,n/<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">if</span> (n&amp;<span class="number">1</span>) D0 = D0*trans*A1, cout &lt;&lt; D0.v[<span class="number">0</span>][<span class="number">11</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> D0 = D0*trans, cout &lt;&lt; D0.v[<span class="number">0</span>][<span class="number">0</span>] &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/28/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91TOJ-637-%E6%9C%AC%E7%94%B0%E5%B0%8F%E7%8B%BC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -347,114 +675,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="rurutoria7">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="總有一天會用到的筆記">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/" class="post-title-link" itemprop="url">【模板】KMP</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2021-09-25 16:18:43" itemprop="dateCreated datePublished" datetime="2021-09-25T16:18:43+08:00">2021-09-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-11-24 00:02:54" itemprop="dateModified" datetime="2021-11-24T00:02:54+08:00">2021-11-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>KMP 用在字串匹配，可以在字串 <span class="math inline">\(S\)</span> 中找到哪些地方出現過字串 <span class="math inline">\(P\)</span>。</p>
-<p>核心思想是優化樸素的字串匹配過程。匹配可以視作，每個位移過後的 <span class="math inline">\(P\)</span>，有哪些與對應的 <span class="math inline">\(S\)</span> 子字串相等：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">S  AABAABAAC</span><br><span class="line">P1 AABAAc</span><br><span class="line">P2  Aabaac</span><br><span class="line">P3   aabaac</span><br><span class="line">P4 	  AABAAC</span><br><span class="line">每個都匹配到失敗為止，並且從匹配失敗之後用小寫表示</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong>在匹配過程中，想辦法跳過會更早失敗的 <span class="math inline">\(P\)</span>。</strong></li>
-</ul>
-<p>在匹配過程中，有時會失敗在某個地方，如在第 1 次匹配中 <span class="math inline">\(S[4] \ne P[4]\)</span>。 第 2和第 3 次匹配，會在更早的地方失敗。我們想直接跳過 2、3 次匹配。 要找到下一個至少不會在 <span class="math inline">\(i&lt;4\)</span> 就匹配失敗的。 可以發現，這相當於把 <span class="math inline">\(P\)</span> 字串位移直到其次長前綴 = 匹配失敗前的後綴（最長就根本沒位移）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">P1 AAB[AA]c</span><br><span class="line">P4 	  [AA]BAAC</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong>訂定函數 <span class="math inline">\(f(i)\)</span>，代表 <span class="math inline">\(P[0,i)\)</span> 次長共同前後綴長度（最長但不包括 <span class="math inline">\(P[0,i)\)</span> 本身）</strong></li>
-</ul>
-<p>上面的想法，相當於以 <span class="math inline">\(i\)</span> <span class="math inline">\(j\)</span> 兩個指針來匹配 <span class="math inline">\(S\)</span> 和 <span class="math inline">\(P\)</span>，一但失敗就使 <span class="math inline">\(j\)</span> 回到最次長前綴。 定義 <span class="math inline">\(f(i)\)</span> 可以方便地做到這件事。</p>
-<ul>
-<li>轉移：<span class="math inline">\(f(i+1) = f(j)+1,\ P[j] = P[i]\)</span></li>
-</ul>
-<figure>
-<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954akyjpj30k6076q33.jpg" alt="image-20211109190643981" /><figcaption aria-hidden="true">image-20211109190643981</figcaption>
-</figure>
-<p>只要 <span class="math inline">\(P[f(i)] = P[i]\)</span>，則 <span class="math inline">\(f(i+1) = f(i)+1\)</span> 那如果不相等呢？也還有機會：</p>
-<figure>
-<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954bflk5j30k6076q33.jpg" alt="image-20211109192615200" /><figcaption aria-hidden="true">image-20211109192615200</figcaption>
-</figure>
-<p>因為 <span class="math inline">\(P[0, f(i)) = P[i-f(i),i)\)</span>，所以 <span class="math inline">\(P[0,f(f(i))) = P[i-f(f(i),i)\)</span>。 此時只要從 <span class="math inline">\(f(i)\)</span> 退到 <span class="math inline">\(f(f(i))\)</span>，再試試看就好了。</p>
-<ul>
-<li>基底：<span class="math inline">\(f(0) = -1,\ f(1) = 0\)</span></li>
-</ul>
-<p>顯然，<span class="math inline">\(f(1) = 0\)</span>。那 <span class="math inline">\(f(0)\)</span> 呢？ 在匹配過程中會出現 <span class="math inline">\(f(0)\)</span>，即是當 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配，而且還失敗的時候。 這時就直接放棄這個 <span class="math inline">\(S[i]\)</span>，從 <span class="math inline">\(S[i+1]\)</span> 和 <span class="math inline">\(P[0]\)</span> 開始重新匹配了。 我們令 <span class="math inline">\(f(0) = -1\)</span>，方便我們知道 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配失敗，該直接跳過了。實作時會體現 <span class="math inline">\(-1\)</span> 的方便性。</p>
-<p>以下是 <span class="math inline">\(f\)</span> 建表的實作：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">f[<span class="number">0</span>]=<span class="number">-1</span>, f[<span class="number">1</span>]=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>,j; i&lt;p.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (j=f[i]; j&gt;=<span class="number">0</span> &amp;&amp; p[j]!=p[i]; j=f[j]);</span><br><span class="line">    f[i+<span class="number">1</span>] = j+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>以 <span class="math inline">\(i\)</span> 遍歷 <span class="math inline">\(S\)</span>，<span class="math inline">\(j\)</span> 遍歷 <span class="math inline">\(P\)</span>，對於每個 <span class="math inline">\(i\)</span> 找到第一個與其匹配的 <span class="math inline">\(j\)</span></li>
-</ul>
-<p>匹配 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j\)</span> 一但成功，就能幫下個 <span class="math inline">\(i\)</span> 找匹配的 <span class="math inline">\(j\)</span>。 否則，就找到下一個可能與 <span class="math inline">\(i\)</span> 匹配的 <span class="math inline">\(P\)</span>。 另外，當 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j=0\)</span> 匹配失敗，就 <span class="math inline">\(i++,j=0\)</span>。</p>
-<p>出現完全成功配對的條件，是過程中發生，<span class="math inline">\(i=|S|-1\)</span> 和 <span class="math inline">\(j=|P|-1\)</span> 匹配成功。 下層迴圈中 <span class="math inline">\(j = |P|\)</span>，必須使 <span class="math inline">\(j = f[j]\)</span>。實作用到了一個細節是，<code>p[p.size()]</code> 會拿到 <code>p.end()</code>，所以不用擔心 RE。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>; i&lt;s.<span class="built_in">size</span>(); i++,j++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> (j&gt;=<span class="number">0</span> &amp;&amp; s[i]!=p[j]) j = f[j];</span><br><span class="line">    <span class="keyword">if</span> (j == p.<span class="built_in">size</span>()<span class="number">-1</span>) ans++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91%E9%80%A3%E9%80%9A%E5%88%86%E9%87%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -566,6 +786,114 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; G[N];</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Edge</span> &#123;</span><span class="keyword">int</span> u, v;&#125;;</span><br><span class="line">vector&lt;Edge&gt; edges;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add_edge</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	G[u].<span class="built_in">pb</span>(edges.<span class="built_in">size</span>());</span><br><span class="line">	edges.<span class="built_in">pb</span>(&#123;u,v&#125;);</span><br><span class="line">	G[v].<span class="built_in">pb</span>(edges.<span class="built_in">size</span>());</span><br><span class="line">	edges.<span class="built_in">pb</span>(&#123;v,u&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> d[N], l[N], timestamp, bridge_cnt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tarjan</span> <span class="params">(<span class="keyword">int</span> u, <span class="keyword">int</span> from)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	d[u] = l[u] = ++timestamp;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> e: G[u])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> v = edges[e].v;</span><br><span class="line">		<span class="keyword">if</span> (!d[v])</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">tarjan</span>(v,e^<span class="number">1</span>);</span><br><span class="line">			l[u] = <span class="built_in">min</span>(l[u], l[v]);	</span><br><span class="line">			<span class="keyword">if</span> (l[v] &gt; d[u])</span><br><span class="line">			&#123;</span><br><span class="line">				bridge_cnt++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (e!=from)</span><br><span class="line">		&#123;</span><br><span class="line">			l[u] = <span class="built_in">min</span>(l[u], d[v]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="橋雙連通">橋雙連通</h4>
 <h2 id="kosaraju">Kosaraju</h2>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/25/%E3%80%90%E6%A8%A1%E6%9D%BF%E3%80%91KMP/" class="post-title-link" itemprop="url">【模板】KMP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-25 16:18:43" itemprop="dateCreated datePublished" datetime="2021-09-25T16:18:43+08:00">2021-09-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-12-06 18:10:32" itemprop="dateModified" datetime="2021-12-06T18:10:32+08:00">2021-12-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>KMP 用在字串匹配，可以在字串 <span class="math inline">\(S\)</span> 中找到哪些地方出現過字串 <span class="math inline">\(P\)</span>。</p>
+<p>核心思想是優化樸素的字串匹配過程。匹配可以視作，每個位移過後的 <span class="math inline">\(P\)</span>，有哪些與對應的 <span class="math inline">\(S\)</span> 子字串相等：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">S  AABAABAAC</span><br><span class="line">P1 AABAAc</span><br><span class="line">P2  Aabaac</span><br><span class="line">P3   aabaac</span><br><span class="line">P4 	  AABAAC</span><br><span class="line">每個都匹配到失敗為止，並且從匹配失敗之後用小寫表示</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>在匹配過程中，想辦法跳過會更早失敗的 <span class="math inline">\(P\)</span>。</strong></li>
+</ul>
+<p>在匹配過程中，有時會失敗在某個地方，如在第 1 次匹配中 <span class="math inline">\(S[4] \ne P[4]\)</span>。 第 2和第 3 次匹配，會在更早的地方失敗。我們想直接跳過 2、3 次匹配。 要找到下一個至少不會在 <span class="math inline">\(i&lt;4\)</span> 就匹配失敗的。 可以發現，這相當於把 <span class="math inline">\(P\)</span> 字串位移直到其次長前綴 = 匹配失敗前的後綴（最長就根本沒位移）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">P1 AAB[AA]c</span><br><span class="line">P4 	  [AA]BAAC</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>訂定函數 <span class="math inline">\(f(i)\)</span>，代表 <span class="math inline">\(P[0,i)\)</span> 次長共同前後綴長度（最長但不包括 <span class="math inline">\(P[0,i)\)</span> 本身）</strong></li>
+</ul>
+<p>上面的想法，相當於以 <span class="math inline">\(i\)</span> <span class="math inline">\(j\)</span> 兩個指針來匹配 <span class="math inline">\(S\)</span> 和 <span class="math inline">\(P\)</span>，一但失敗就使 <span class="math inline">\(j\)</span> 回到最次長前綴。 定義 <span class="math inline">\(f(i)\)</span> 可以方便地做到這件事。</p>
+<ul>
+<li>轉移：<span class="math inline">\(f(i+1) = f(j)+1,\ P[j] = P[i]\)</span></li>
+</ul>
+<figure>
+<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954akyjpj30k6076q33.jpg" alt="image-20211109190643981" /><figcaption aria-hidden="true">image-20211109190643981</figcaption>
+</figure>
+<p>我們來計算 <span class="math inline">\(f(i)\)</span>。只要 <span class="math inline">\(P[f(i)] = P[i]\)</span>，則 <span class="math inline">\(f(i+1) = f(i)+1\)</span> 那如果不相等呢？也還有機會：</p>
+<figure>
+<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gw954bflk5j30k6076q33.jpg" alt="image-20211109192615200" /><figcaption aria-hidden="true">image-20211109192615200</figcaption>
+</figure>
+<p>因為 <span class="math inline">\(P[0, f(i)) = P[i-f(i),i)\)</span>，所以 <span class="math inline">\(P[0,f(f(i))) = P[i-f(f(i),i)\)</span>。 此時只要從 <span class="math inline">\(f(i)\)</span> 退到 <span class="math inline">\(f(f(i))\)</span>，再試試看就好了。</p>
+<ul>
+<li>基底：<span class="math inline">\(f(0) = -1,\ f(1) = 0\)</span></li>
+</ul>
+<p>顯然，<span class="math inline">\(f(1) = 0\)</span>。那 <span class="math inline">\(f(0)\)</span> 呢？ 在匹配過程中會出現 <span class="math inline">\(f(0)\)</span>，即是當 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配，而且還失敗的時候。 這時就直接放棄這個 <span class="math inline">\(S[i]\)</span>，從 <span class="math inline">\(S[i+1]\)</span> 和 <span class="math inline">\(P[0]\)</span> 開始重新匹配了。 我們令 <span class="math inline">\(f(0) = -1\)</span>，方便我們知道 <span class="math inline">\(S[i]\)</span> 和 <span class="math inline">\(P[0]\)</span> 匹配失敗，該直接跳過了。實作時會體現 <span class="math inline">\(-1\)</span> 的方便性。</p>
+<p>以下是 <span class="math inline">\(f\)</span> 建表的實作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">f[<span class="number">0</span>]=<span class="number">-1</span>, f[<span class="number">1</span>]=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>,j; i&lt;p.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (j=f[i]; j&gt;=<span class="number">0</span> &amp;&amp; p[j]!=p[i]; j=f[j]);</span><br><span class="line">    f[i+<span class="number">1</span>] = j+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>以 <span class="math inline">\(i\)</span> 遍歷 <span class="math inline">\(S\)</span>，<span class="math inline">\(j\)</span> 遍歷 <span class="math inline">\(P\)</span>，對於每個 <span class="math inline">\(i\)</span> 找到第一個與其匹配的 <span class="math inline">\(j\)</span></li>
+</ul>
+<p>匹配 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j\)</span> 一但成功，就能幫下個 <span class="math inline">\(i\)</span> 找匹配的 <span class="math inline">\(j\)</span>。 否則，就找到下一個可能與 <span class="math inline">\(i\)</span> 匹配的 <span class="math inline">\(P\)</span>。 另外，當 <span class="math inline">\(i\)</span> 與 <span class="math inline">\(j=0\)</span> 匹配失敗，就 <span class="math inline">\(i++,j=0\)</span>。</p>
+<p>出現完全成功配對的條件，是過程中發生，<span class="math inline">\(i=|S|-1\)</span> 和 <span class="math inline">\(j=|P|-1\)</span> 匹配成功。 下層迴圈中 <span class="math inline">\(j = |P|\)</span>，必須使 <span class="math inline">\(j = f[j]\)</span>。實作用到了一個細節是，<code>p[p.size()]</code> 會拿到 <code>p.end()</code>，所以不用擔心 RE。ㄦ</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>; i&lt;s.<span class="built_in">size</span>(); i++,j++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> (j&gt;=<span class="number">0</span> &amp;&amp; s[i]!=p[j]) j = f[j];</span><br><span class="line">    <span class="keyword">if</span> (j == p.<span class="built_in">size</span>()<span class="number">-1</span>) ans++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -790,20 +1118,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
