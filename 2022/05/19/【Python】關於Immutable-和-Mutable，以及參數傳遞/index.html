@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rurutoria7.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="剛接觸到 Python 時，很可能會遇到類似靈異現象： 12345678910&gt;&gt;&gt; a &#x3D; []&gt;&gt;&gt; b &#x3D; a&gt;&gt;&gt; b.append(1)&gt;&gt;&gt; a[1]&gt;&gt;&gt; a &#x3D; 1&gt;&gt;&gt; b &#x3D; a&gt;&gt;&gt; b +&#x3D; 1&gt;&gt;&gt; a1 又或者，對於 Pytho">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Python】關於Immutable 和 Mutable，以及參數傳遞">
+<meta property="og:url" content="https://rurutoria7.github.io/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/index.html">
+<meta property="og:site_name" content="總有一天會用到的筆記">
+<meta property="og:description" content="剛接觸到 Python 時，很可能會遇到類似靈異現象： 12345678910&gt;&gt;&gt; a &#x3D; []&gt;&gt;&gt; b &#x3D; a&gt;&gt;&gt; b.append(1)&gt;&gt;&gt; a[1]&gt;&gt;&gt; a &#x3D; 1&gt;&gt;&gt; b &#x3D; a&gt;&gt;&gt; b +&#x3D; 1&gt;&gt;&gt; a1 又或者，對於 Pytho">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-05-19T12:08:14.000Z">
+<meta property="article:modified_time" content="2022-05-20T06:28:57.337Z">
+<meta property="article:author" content="rurutoria7">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rurutoria7.github.io/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>【Python】關於Immutable 和 Mutable，以及參數傳遞 | 總有一天會用到的筆記</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">總有一天會用到的筆記</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">本站為減緩筆者下列疑難雜症誕生：記性很差，學過就忘；智商低落，囫圇吞棗。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Python】關於Immutable 和 Mutable，以及參數傳遞
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2022-05-19 20:08:14" itemprop="dateCreated datePublished" datetime="2022-05-19T20:08:14+08:00">2022-05-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2022-05-20 14:28:57" itemprop="dateModified" datetime="2022-05-20T14:28:57+08:00">2022-05-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>剛接觸到 Python 時，很可能會遇到類似靈異現象： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b.append(<span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line">[<span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b += <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>又或者，對於 Python 時而 pass by reference，時而 pass by value 有所疑惑。如果嘗試搜尋，可能會發現它們皆與今天的主題有關。</p>
+<h2 id="python-的變數是什麼">Python 的變數是什麼？</h2>
+<p>首先來談最基本的問題：Python 的變數是什麼？這個問題並非你想像的理所當然。</p>
+<p>在我們熟悉的語言如 C++ 裡，宣告變數，等同配置了一段記憶體，用以儲存資訊。在引用該段變數時，不管是讀取、修改、賦值，相當於在操作這段記憶體內的資料。也就是說在 C++ 裡，變數是某段記憶體的別名；這也說明了為什麼 C++ 需要你給出型別才能宣告，否則電腦根本不知道該配置多少記憶體給這個變數。</p>
+<p>而在 Python 裡，變數僅是從「名稱」到「物件」的映射。在 Python 裡對一個變數賦值，代表了你將這個名稱「指向」到某個物件上。因此，在 Python 裡變數沒有型別。你可以隨時隨地將一個名稱指向至另一個物件。</p>
+<p>為了方便示例，這裡介紹 <code>id</code> 和 <code>is</code>。<code>id(foo)</code> 會將傳入變數所指向的物件的 <code>id</code> （可當作記憶體位址）印出來。而 <code>a is b</code> 會比較兩者所指向的物件，是否為同一實體，也就是 <code>id(a) == id(b)</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">4351113008</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a <span class="keyword">is</span> a</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<h3 id="對一個變數你可以做的事情包含">對一個變數，你可以做的事情包含：</h3>
+<h4 id="引用它">1. 引用它</h4>
+<p>讀取和修改的行為，都算是引用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">2</span></span><br><span class="line">b = <span class="number">3</span></span><br><span class="line"><span class="built_in">print</span>(a+b)  <span class="comment"># 引用 a 和 b</span></span><br><span class="line"></span><br><span class="line">owo = []</span><br><span class="line">owo.append(<span class="number">1</span>)   <span class="comment"># 引用 owo</span></span><br></pre></td></tr></table></figure>
+<h4 id="指向至一個物件上賦值">2. 指向至一個物件上（賦值）</h4>
+<p><code>=</code> 運算子做的就是賦值。<code>=</code> 將一個名稱指向一個物件。如果指定的命名空間不存在這個名稱，那 Python 會創建一個新的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">owo = []    <span class="comment"># 將 owo 賦值</span></span><br><span class="line">owo.append(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">a = <span class="number">2</span>   <span class="comment"># 將 a 賦值</span></span><br><span class="line">a = a+<span class="number">2</span> <span class="comment"># 將 a 賦值，右邊 a+2 引用 a</span></span><br><span class="line"><span class="built_in">print</span>(a) </span><br></pre></td></tr></table></figure>
+<p>如果用變數將另一個變數賦值，則兩個變數會指向同一個物件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a <span class="keyword">is</span> b</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<h4 id="將其從命名空間刪除">3. 將其從命名空間刪除</h4>
+<p>我們可以在指定的命名空間新增名稱，反之我們也可以透過 <code>del</code> 關鍵字把它刪除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(a)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">NameError: name <span class="string">&#x27;a&#x27;</span> <span class="keyword">is</span> <span class="keyword">not</span> defined</span><br></pre></td></tr></table></figure>
+<p>要注意的是：變數僅僅是一個名稱。我們將這個名稱刪除，實際上不會影響到記憶體裡的物件。對於字串物件 <code>'starbuststream'</code> 來說，僅僅是少了一個參考至它自己的變數而已。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">4351113008</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">4351113008</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">del</span> a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">NameError: name <span class="string">&#x27;a&#x27;</span> <span class="keyword">is</span> <span class="keyword">not</span> defined</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b</span><br><span class="line"><span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(b)</span><br><span class="line"><span class="number">4351113008</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>題外話：Python 的回收機制中，當參考至某物件的數量等於零，也就是再也不可能透過任何方式引用它，它就有可能被刪除。</p>
+</blockquote>
+<h2 id="關於物件的值immutable-vs-mutable">關於物件的值：Immutable vs Mutable</h2>
+<p>根據官方文件，每個物件都由 <code>id</code>, <code>type</code>, 和 <code>value</code> 組成。有些物件的值是可變的，有些則否。這引出了今天的主題：Immutable vs Mutable。</p>
+<p>immutable 不像 mutable 物件，提供了可以修改成員屬性的方法。這代表 immutable 是唯讀的。immutable object 有：<code>int</code>, <code>str</code>, <code>float</code>, <code>bool</code>, <code>tuple</code>, <code>frozenset</code> 等。而常見的 mutable object 有 <code>list</code>, <code>dict</code>, 以及自訂 <code>class</code> 等。</p>
+<p>這不符合我們的經驗，<code>int</code> 怎麼可能不可修改？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">4348150000</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a += <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">4348150032</span></span><br></pre></td></tr></table></figure>
+<p>如果理解上個小節所說的，應該可以想到：<code>a += 1</code> 實際上做的事，是 <code>a = a+1</code>。其中 <code>a+1</code> 是對 <code>a</code> 的引用，並且生成了一個新物件 <code>int(2)</code>；<code>=</code> 則是把 <code>a</code> 重新指向到右側生成的新物件。</p>
+<p>對於引言例子的原理就豁然開朗了。當我們使用 <code>my_lis？t.append()</code> 時，我們僅是引用；而使用 <code>my_int += 1</code> 時，我們其實進行了隱性的賦值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b.append(<span class="number">1</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line">[<span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">2</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>若我們將兩者都做賦值，mutable 跟 immutable 的表現是完全一樣的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = [<span class="string">&#x27;owo&#x27;</span>]     <span class="comment"># 將 b 指定至另一個物件</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a <span class="keyword">is</span> b</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = <span class="number">2</span>      <span class="comment"># 將 b 指定至另一個物件</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a <span class="keyword">is</span> b</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<h2 id="作用域和-mutablility-的關係">作用域和 Mutablility 的關係</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>引用某個變數時，Python 會先查找當前命名空間 <code>local</code> 裡是否有這個名稱，如果沒有則一層一層往外找，直到 <code>global</code>，接著是 <code>builtin</code>。賦值時，若 <code>local</code> 有這個名稱沒事；若沒有，Python 也不會往外找，而是直接新增一個名稱在 <code>local</code>。<strong>換句話說，外層的名稱是唯讀的。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line"><span class="meta">... </span>    <span class="built_in">print</span>(a)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>show()</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span>():</span></span><br><span class="line"><span class="meta">... </span>    a += <span class="number">1</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add()</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">2</span>, <span class="keyword">in</span> add</span><br><span class="line">UnboundLocalError: local variable <span class="string">&#x27;a&#x27;</span> referenced before assignment</span><br></pre></td></tr></table></figure>
+<p>執行 <code>a += 1</code>，也就是 <code>a = a+1</code> 時，<code>a</code> 首先被新增到 <code>local</code> 命名空間，接著 <code>a+1</code> 引用剛被新增的名稱 <code>a</code>。此時會發現 <code>a</code> 尚未被指定到任何一個物件！反之，若改為 <code>list</code> 並在函式內執行 <code>append</code>，因為是引用，不會在 <code>local</code> 裡新增名稱，也就可以直接修改到外面的 <code>list</code> 了。</p>
+<h3 id="global-和-nonlocal-關鍵字">global 和 nonlocal 關鍵字。</h3>
+<p>解法很簡單。<code>global</code> 語句宣告了該名稱位於全域，Python 不需要在苦苦搜尋該名稱。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span>():</span></span><br><span class="line"><span class="meta">... </span>    <span class="keyword">global</span> a</span><br><span class="line"><span class="meta">... </span>    a = <span class="number">1</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><code>nonlocal</code> 語句宣告該名稱不在 <code>local</code> 和 <code>global</code> 裡。由於 <code>nonlocal</code> 作用域可能有很多個，使用 <code>nonlocal</code> 需要明確的指出該名稱位於哪一層作用域，只能對預先存在的名稱做 <code>nonlocal</code> 宣告。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    a = <span class="number">2</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="keyword">nonlocal</span> a</span><br><span class="line"><span class="meta">... </span>            a += <span class="number">1</span></span><br><span class="line"><span class="meta">... </span>    inner()</span><br><span class="line"><span class="meta">... </span>    <span class="built_in">print</span>(a)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>outer()</span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="keyword">nonlocal</span> qwq    <span class="comment"># 只能對預先存在的名稱做 nonlocal 宣告</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">3</span></span><br><span class="line">SyntaxError: no binding <span class="keyword">for</span> <span class="keyword">nonlocal</span> <span class="string">&#x27;qwq&#x27;</span> found</span><br></pre></td></tr></table></figure>
+<h2 id="python-的參數傳遞">Python 的參數傳遞</h2>
+<p>Python 的參數傳遞，相當於做了一次賦值。將變數作為容器的語言中，有 call by reference 或 call by value 的概念，在 Python 中是沒有的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">x</span>):</span></span><br><span class="line"><span class="meta">... </span>    x += <span class="number">1</span>      <span class="comment"># 賦值</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add(a)   <span class="comment"># 相當於 x = a</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">ap</span>(<span class="params">x</span>):</span></span><br><span class="line"><span class="meta">... </span>    x.append(<span class="number">1</span>)     <span class="comment"># 引用</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ap(b)   <span class="comment"># 相當於 x = b</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b</span><br><span class="line">[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="為什麼需要有-immutable-objects">為什麼需要有 Immutable Objects?</h2>
+<p>Immutable Objects 有以下優點，但我現在還沒體會必要性： - 保證一但被創建出來 hash 值就不會改變，才能做為 hash table 的 key - 唯讀保證了多線程安全 - Python 的機制使多個變數會指向同一個物件，不變性保證了每個變數參考到的物件始終相同</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/06/%E3%80%90%E5%BF%83%E5%BE%97%E3%80%91%E6%96%B0%E7%AB%B9%E9%81%8A%E8%A8%98/" rel="prev" title="【心得】新竹遊記">
+      <i class="fa fa-chevron-left"></i> 【心得】新竹遊記
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#python-%E7%9A%84%E8%AE%8A%E6%95%B8%E6%98%AF%E4%BB%80%E9%BA%BC"><span class="nav-number">1.</span> <span class="nav-text">Python 的變數是什麼？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8D%E4%B8%80%E5%80%8B%E8%AE%8A%E6%95%B8%E4%BD%A0%E5%8F%AF%E4%BB%A5%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85%E5%8C%85%E5%90%AB"><span class="nav-number">1.1.</span> <span class="nav-text">對一個變數，你可以做的事情包含：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E5%AE%83"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 引用它</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E5%90%91%E8%87%B3%E4%B8%80%E5%80%8B%E7%89%A9%E4%BB%B6%E4%B8%8A%E8%B3%A6%E5%80%BC"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 指向至一個物件上（賦值）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%87%E5%85%B6%E5%BE%9E%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93%E5%88%AA%E9%99%A4"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 將其從命名空間刪除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%9C%E6%96%BC%E7%89%A9%E4%BB%B6%E7%9A%84%E5%80%BCimmutable-vs-mutable"><span class="nav-number">2.</span> <span class="nav-text">關於物件的值：Immutable vs Mutable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C-mutablility-%E7%9A%84%E9%97%9C%E4%BF%82"><span class="nav-number">3.</span> <span class="nav-text">作用域和 Mutablility 的關係</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#global-%E5%92%8C-nonlocal-%E9%97%9C%E9%8D%B5%E5%AD%97"><span class="nav-number">3.1.</span> <span class="nav-text">global 和 nonlocal 關鍵字。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python-%E7%9A%84%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E"><span class="nav-number">4.</span> <span class="nav-text">Python 的參數傳遞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E9%9C%80%E8%A6%81%E6%9C%89-immutable-objects"><span class="nav-number">5.</span> <span class="nav-text">為什麼需要有 Immutable Objects?</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="rurutoria7"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">rurutoria7</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rurutoria7</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -28,7 +28,7 @@
 <meta property="og:description" content="本篇尚在施工中...  本篇以時間順序呈現特殊選才的準備、面試過程（流水帳）。內容以單純紀錄過程和感想為主。 書審 我大概從十月開始寫備審資料，最早繳件的是清大，截止前幾天才真正把備審做完交件。 每間學校都有自己的格式，但都大同小異，我是先做一份完整的備審，再根據每個學校修改。 大綱參考自 Koios1143 學長的樣式，連美編風格都差不多。 我沒有做特別的美術、放 icon 之類的，後來觀察也">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2021-12-03T10:07:59.000Z">
-<meta property="article:modified_time" content="2021-12-06T15:49:51.568Z">
+<meta property="article:modified_time" content="2021-12-21T18:40:41.656Z">
 <meta property="article:author" content="rurutoria7">
 <meta property="article:tag" content="心得">
 <meta property="article:tag" content="特殊選才">
@@ -193,7 +193,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-12-06 23:49:51" itemprop="dateModified" datetime="2021-12-06T23:49:51+08:00">2021-12-06</time>
+                <time title="修改時間：2021-12-22 02:40:41" itemprop="dateModified" datetime="2021-12-22T02:40:41+08:00">2021-12-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -222,14 +222,14 @@
 <p>本篇以時間順序呈現特殊選才的準備、面試過程（流水帳）。內容以單純紀錄過程和感想為主。</p>
 <h2 id="書審">書審</h2>
 <p>我大概從十月開始寫備審資料，最早繳件的是清大，截止前幾天才真正把備審做完交件。 每間學校都有自己的格式，但都大同小異，我是先做一份完整的備審，再根據每個學校修改。 大綱參考自 Koios1143 學長的樣式，連美編風格都差不多。</p>
-<p>我沒有做特別的美術、放 icon 之類的，後來觀察也確實可以得知資工系教授不太在意這個。誇張地說，我覺得做備審可以不用太認真，因為書審成績絕大部分會反應自競賽經歷。<del>拿省下來的時間去讀《Introduction to Algorithm》，然後祈禱教授會問到，可能會更划算。</del></p>
+<p>我沒有做特別的美術、放 icon 之類的，後來觀察也確實可以得知資工系教授不太在意這個。<strong>誇張地說，我覺得做備審可以不用太認真</strong>，因為書審成績絕大部分會反應自競賽經歷。<del>拿省下來的時間去讀《Introduction to Algorithm》，然後祈禱教授會問到，可能會更划算。</del></p>
 <h2 id="面試">面試</h2>
-<p>面試的準備分成自我介紹、問答兩個方向。</p>
+<p><strong>面試的準備分成自我介紹、問答兩個方向。</strong></p>
 <p>自我介紹我一開始沒有特別準備，是兩手空空去找輔導室模擬面試時 free style 出來的。後來最先面試的清大資工開放使用簡報做自我介紹，因此才特別準備了簡報和講稿。內容以“競賽經歷”和“個人特質”為兩個方向。但後來清大資工的學長告訴我們，自我介紹應該以“未來”為主，而不是條列過去的經歷。</p>
-<p>另外我看著自己的備審資料，寫下大約五十個可能被問的問題，另外也記錄下一些網路上找到學長分享的面試問題。寫完之後就</p>
+<p>另外我看著自己的備審資料，<strong>寫下大約五十個可能被問的問題</strong>，另外也記錄下一些網路上找到學長分享的面試問題。寫完之後就</p>
 <p>面試服裝，一件看起來版型和材質比較休閒的深灰色西裝外套，一件灰色的襯衫；下面是黑色的九分褲。這樣的穿著應該算蠻正式了，去清大面試時看到有人穿帽Ｔ加牛仔褲、制服等。</p>
 <h3 id="成大資工">成大資工</h3>
-<p>成大資工甲組為競程取向，今年二階沒有面試，只有上機考佔 50% 成績。 題目偏裸、經典：</p>
+<p>成大資工甲組為競程取向，<strong>今年二階沒有面試，只有上機考佔 50% 成績</strong>。 題目偏裸、經典：</p>
 <ul>
 <li>pA：差分序列</li>
 <li>pB：Sliding window 極值</li>
@@ -241,40 +241,42 @@
 <p>pA AC 之後，因為 pC 有看過，所以直接刻滿分解，結果 0 分。</p>
 <p>接下來開 pB。根據 pC 的經驗，雖然知道是 Sliding Windows，但我先寫了一個 <span class="math inline">\(O(n)\)</span> 查詢最極值的版本。 pD 很順利的寫了位元 DP，但另一子題 <span class="math inline">\(2^n\)</span> 刻爛了。</p>
 <p>又回去 pB 寫了一顆 TLE 的線段樹。我不信邪再次帶 log，用 priority_queue 再次 TLE。最後一個小時，就在處理 pB 極值、de pC 的 bug、解決 pD RE 的問題中渡過了。臨死前刻的 Sliding Window，是在比賽快結束時 judge 死掉後上傳的。結果最後也沒 AC。</p>
+<h4 id="心得">心得</h4>
+<p>上機考就是全憑個人實力了，但只要經過一定程度的訓練其實都很有機會。以今年來看，參加複試者其實實力參差不齊。也是這個原因，讓我在大失常後依然名次保持得很前面。</p>
 <h3 id="清大資工">清大資工</h3>
 <p>報到之後就在考生休息室等工作人員叫名字。考生休息室很適合補眠，雖然休息室裡的人大部分都是熟面孔，但聽不到談話的聲音。正好昨天風太大只睡了三個小時，精神不是很好。</p>
 <p>大家穿著風格各異，最樸素的是襯衫長褲，也看到有人穿帽Ｔ跟牛仔褲。我原本西裝外套裡只有 T-shirt，但看到前面兩個換上全套西裝後，我也去把備用的灰色襯衫換上了。</p>
 <p>叫到名字之後，會被工作人員領去相鄰的兩間面試教室走廊稍加等待。坐在那裡有種待宰羔羊的感覺。那裡有兩個學姊駐點，她們會找你聊天，或聊天給你聽。我有跟她們講一點話，對舒緩情緒的幫助還是很大的，非常感謝她們。</p>
 <h4 id="第一間教室">第一間教室</h4>
-<p>第一間教室配置如下：你會站在投影幕旁，前方是圍成ㄇ字型的桌子，且有兩個教授手上拿著資料坐在ㄇ字的一側。投影幕上已經放好你的簡報了，跟教授問好後隨即拿起桌上準備好的簡報筆開始五分鐘自我介紹。過程意外的並不緊張，其中一個教授比較認真看你報告，另一個就是邊聽邊認真看資料了。</p>
-<p>自我介紹結束後教授會輪流問你一些問題：</p>
+<p>第一間教室配置如下：你會站在投影幕旁，前方是圍成ㄇ字型的桌子，且有兩個教授手上拿著資料坐在ㄇ字的一側。投影幕上已經放好你的簡報了，跟教授問好後隨即拿起桌上準備好的簡報筆開始<strong>五分鐘自我介紹</strong>。過程意外的並不緊張，其中一個教授比較認真看你報告，另一個就是邊聽邊認真看資料了。</p>
+<p><strong>自我介紹結束後教授會輪流問你一些問題</strong>：</p>
 <blockquote>
 <p>教授Ａ：你的奧林匹亞表現得比能力競賽還要好，這兩個對你來說有什麼差別嗎？</p>
 </blockquote>
-<p><em>答：奧林匹亞，尤其是入營考，子任務除了分數給的很甜，也具有很強的引導效果。這對我來說是幫助我發揮的更好的特性。</em></p>
+<p><em>我：奧林匹亞，尤其是入營考，子任務除了分數給的很甜，也具有很強的引導效果。這對我來說是幫助我發揮的更好的特性。</em></p>
 <blockquote>
 <p>教授Ａ：如果加入 APCS 做比較呢？</p>
 </blockquote>
-<p><em>答：APCS 的題目考的核心觀念都非常經典，也不需要太多拆包裝的過程</em></p>
+<p><em>我：APCS 的題目考的核心觀念都非常經典，也不需要太多拆包裝的過程</em></p>
 <blockquote>
 <p>教授Ａ：你剛剛分析的 APCS 題型，對你來說是優勢還是劣勢？</p>
 </blockquote>
-<p><em>答：我認為是。相對於想法，我認為我更擅長實作</em></p>
+<p><em>我：我認為是。相對於想法，我認為我更擅長實作</em></p>
 <blockquote>
 <p>教授Ｂ：南區第五有進全國嗎？那發生什麼事，為什麼沒有進全國？</p>
 </blockquote>
-<p><em>答：南區賽前四才進全國，蠻可惜的。其中一題題序說要用 <code>\r</code> 來做分隔符，我就跳過了。一題我們懷疑測資有誤。另一題我有想出解法，但看錯測資範圍，將 <span class="math inline">\(7!N^2\)</span> 估成 <span class="math inline">\(N!N^2\)</span>。</em></p>
+<p><em>我：南區賽前四才進全國，蠻可惜的。其中一題題序說要用 <code>\r</code> 來做分隔符，我就跳過了。一題我們懷疑測資有誤。另一題我有想出解法，但看錯測資範圍，將 <span class="math inline">\(7!N^2\)</span> 估成 <span class="math inline">\(N!N^2\)</span>。</em></p>
 <blockquote>
 <p>教授Ｂ：那題 <span class="math inline">\(N!N^2\)</span> 的題目你後來有想出更好的方法嗎？</p>
 </blockquote>
-<p><em>答：沒有，後來我也因為沒有部份分就沒有丟這題了。</em></p>
+<p><em>我：沒有，後來我也因為沒有部份分就沒有丟這題了。</em></p>
 <blockquote>
 <p>教授Ａ：你們學校的資訊社有悠久的競賽風氣，你怎麼把他傳承給下一屆？</p>
 </blockquote>
-<p><em>答：要先給剛進入社團的學弟們一個願景和目標，讓她們了解她們有哪些競賽、活動可以選擇參與。另外跟學長培養良好的感情也很重要，每年我們透過舉辦寒暑訓都可以讓學弟和學長們交流</em></p>
+<p><em>我：要先給剛進入社團的學弟們一個願景和目標，讓她們了解她們有哪些競賽、活動可以選擇參與。另外跟學長培養良好的感情也很重要，每年我們透過舉辦寒暑訓都可以讓學弟和學長們交流</em></p>
 <p>第一階段結束後，會在外面坐，再進入第二間教室。</p>
 <h4 id="第二間教室">第二間教室</h4>
-<p>第二間教室會讓你站在白板面前，兩位教授就在白板前的長桌後（一位是在選訓營看過的韓永楷教授，全程面帶大大的笑容）。且桌上放著許多信封袋。接著他們會要你抽一份，作為你的面試題目。我抽到的問題是：</p>
+<p>第二間教室會讓你站在白板面前，兩位教授就在白板前的長桌後（一位是在選訓營看過的韓永楷教授，全程面帶大大的笑容）。<strong>且桌上放著許多信封袋。接著他們會要你抽一份，作為你的專業問題</strong>。我抽到的問題是：</p>
 <blockquote>
 <p>請提出可以依字典序輸出 <span class="math inline">\(N!\)</span> 種排列的演算法。</p>
 </blockquote>
@@ -283,20 +285,20 @@
 <p>然後我就燒雞了，只說可以用 <code>set&lt;int&gt;</code> 查找剩餘元素之類的東西。</p>
 <p>教授問了我下個問題，打算引導我解答：</p>
 <blockquote>
-<p>next_permutation 要怎麼實作？</p>
+<p>教授Ｂ：next_permutation 要怎麼實作？</p>
 </blockquote>
 <p>接下來燒的更慘。教授不停的舉 case ，然後協助我模擬 next_permutation（我還寫錯好幾次）讓我觀察規律。最後才在教授的幫助下，得出結論：由後往前，找到第一個 <span class="math inline">\(a[i]&lt;a[i+1]\)</span>，接著在 <span class="math inline">\([i+1,n]\)</span> 中找到大於 <span class="math inline">\(a[i]\)</span> 中最小的，把它移到 <span class="math inline">\(i\)</span>，後面就從小排到大。</p>
 <p>我得出結論後時間也差不多了，教授讓我問他們問題：</p>
 <p><em>問：清大在合併竹教大之後，與其他學校相比在師培資源有什麼優勢呢？</em></p>
 <p>教授很認真的給出答覆，我原本以為資工系的教授對這個可能不會了解的太詳細，會被認為我問了怪問題：</p>
 <blockquote>
-<p>最顯著的差距是老師數量。在清大要選到師培課程會簡單許多，不用擔心修不到課。另外清大本身的多元性也是很大的優點，你會在課程裡遇到其他來自不同領域的同學，這是其他學校比較沒有的。你未來想當正職的老師嗎？</p>
+<p>教授Ｂ：最顯著的差距是老師數量。在清大要選到師培課程會簡單許多，不用擔心修不到課。另外清大本身的多元性也是很大的優點，你會在課程裡遇到其他來自不同領域的同學，這是其他學校比較沒有的。你未來想當正職的老師嗎？</p>
 </blockquote>
-<p><em>答：可能不是首選，但是一個優先度很高的選項。</em></p>
-<h4 id="心得">心得</h4>
-<p>清大資工整體的面試體驗很棒，面試教授中沒有黑臉。第一教室的教授並不會問刁難你的問題，問題都蠻切中你備審的。第二間教授在你卡住時會很耐心的引導你。但如果你表現像我一樣差到還會特別感嘆教授的耐心，那面試大概也沒了......</p>
+<p><em>我：可能不是首選，但是一個優先度很高的選項。</em></p>
+<h4 id="心得-1">心得</h4>
+<p><strong>清大資工整體的面試體驗很棒</strong>，面試教授中沒有黑臉。第一教室的教授並不會問刁難你的問題，問題都蠻切中你備審的。第二間教授在你卡住時會很耐心的引導你。但如果你表現像我一樣差到還會特別感嘆教授的耐心，那面試大概也沒了......</p>
 <h3 id="師大資工">師大資工</h3>
-<p>我們在報到前，在師大校園中的椅子上等。報到後就坐在考生休息室裡，有一些大沙發可以坐。</p>
+<p>我們在報到前，在師大校園中的椅子上等。報到後就坐在考生休息室裡，不大，但有一些大沙發可以坐。</p>
 <p>工作人員叫名字後帶上二樓，流程和配置跟清大大同小異：兩間教室、走廊上有椅子，但學姊少了一個。</p>
 <p>師大學姊也會找你聊天，但聊的就比較刻意了，感覺像專門來緩解情緒的。相較之下，那兩個清大學姊本來就講得很開心，才順便邀你加入話題，自然許多。</p>
 <h4 id="第一間教室-1">第一間教室</h4>
@@ -305,23 +307,23 @@
 <blockquote>
 <p>教授Ａ：你可以詳細說明妳是怎麼準備 TOI 初選的嗎？</p>
 </blockquote>
-<p><em>答：略（我照著備審講了一段，提到如何準備初選）</em></p>
+<p><em>我：略（我照著備審講了一段，提到如何準備初選）</em></p>
 <blockquote>
 <p>教授Ｂ：你有打過 MyFirstCTF，那有進 AIS3 Summer Camp 嗎?</p>
 </blockquote>
-<p><em>答：沒有，他總共取 20 名進 AIS3，我是 28 名</em></p>
+<p><em>我：沒有，他總共取 20 名進 AIS3，我是 28 名</em></p>
 <blockquote>
 <p>教授Ｂ：HITCON Education Defense 時，你有什麼貢獻嗎？</p>
 </blockquote>
-<p><em>答：沒有，因為我們隊友社內網管專長，所以大部分的工作是他做的</em></p>
+<p><em>我：沒有，因為我們隊友社內網管專長，所以大部分的工作是他做的</em></p>
 <blockquote>
 <p>教授Ｂ：那紅隊採取了哪些攻擊手法？你們拿到第三名相當不錯</p>
 </blockquote>
-<p><em>答：我們其實運用了比賽的漏洞，因為他有給出管理虛擬機的界面，因此當紅隊打進來的時候只要把她重新開機就好了</em></p>
+<p><em>我：我們其實運用了比賽的漏洞，因為他有給出管理虛擬機的界面，因此當紅隊打進來的時候只要把她重新開機就好了</em></p>
 <blockquote>
 <p>教授Ｂ：你們是寫程式讓他開機嗎？</p>
 </blockquote>
-<p><em>答：我們在管理界面上快照之後，手動復原</em></p>
+<p><em>我：我們在管理界面上快照之後，手動復原</em></p>
 <blockquote>
 <p>教授Ａ：有什麼問題要問我們的嗎？</p>
 </blockquote>
@@ -329,7 +331,7 @@
 <blockquote>
 <p>教授Ａ：我想第二間教授的問題可以詳細的回答你，這是他負責的，若你能參與他會很高興。那還沒有其他問題？</p>
 </blockquote>
-<p><em>答：暫時沒有</em></p>
+<p><em>我：暫時沒有</em></p>
 <h4 id="第二間教室-1">第二間教室</h4>
 <p>第二間的兩位教授不是和藹可親類型的，但看得出來是抱著蠻愉悅的心情當考官。</p>
 <p>一進來他就問你，上一間有沒有問題沒有得到解答的。所以我又問了一次。</p>
@@ -340,58 +342,99 @@
 <blockquote>
 <p>教授Ａ：你在這裡待過兩個禮拜，應該對師大很了解，不需要我多做介紹吧？</p>
 </blockquote>
-<p><em>答：我只對上課的教室跟學餐比較熟而已......</em></p>
+<p><em>我：我只對上課的教室跟學餐比較熟而已......</em></p>
 <blockquote>
 <p>教授Ｂ：要進 TOI 非常不容易，你的練習時間是怎樣？</p>
 </blockquote>
-<p><em>答：一天大約三小時以上</em></p>
+<p><em>我：一天大約三小時以上</em></p>
 <blockquote>
 <p>教授Ｂ：那課業怎麼辦？</p>
 </blockquote>
-<p><em>答：我平時的時間分配以練習演算法競賽為主，到段考前一週才會翻開書</em></p>
+<p><em>我：我平時的時間分配以練習演算法競賽為主，到段考前一週才會翻開書</em></p>
 <blockquote>
 <p>教授Ｂ：那你成績怎樣？</p>
 </blockquote>
-<p><em>答：我的段考成績都在班排中間偏上，但算上平時成績之後就比較低了</em></p>
+<p><em>我：我的段考成績都在班排中間偏上，但算上平時成績之後就比較低了</em></p>
 <blockquote>
 <p>教授Ｂ：在南一中中間偏上也還不錯了</p>
 </blockquote>
 <blockquote>
 <p>教授Ａ：如果特選落榜，你有考慮過備案嗎？</p>
 </blockquote>
-<p><em>答：我應該會去考 APCS 組</em></p>
+<p><em>我：我應該會去考 APCS 組</em></p>
 <blockquote>
-<p>那你預估的成績大概會上哪些學校？</p>
+<p>教授Ａ：那你預估的成績大概會上哪些學校？</p>
 </blockquote>
-<p><em>答：應該是中字輩吧</em></p>
+<p><em>我：應該是中字輩吧</em></p>
 <blockquote>
-<p>師大對你來說有什麼特別的意義？也就是說，跟其他學校比起來，為什麼你選擇師大?</p>
+<p>教授Ａ：師大對你來說有什麼特別的意義？也就是說，跟其他學校比起來，為什麼你選擇師大?</p>
 </blockquote>
 <p>這個最基礎的問題我雖然有稍微想過，但講出來才發現問題大了。</p>
-<p><em>答：清交資源豐富，但我覺得希望渺茫......(陷入一段很長的沈思，我發現我說錯話了，不知道該怎麼接下去)。因為師大是師培體系...我又對教育蠻有興趣的....我覺得教學是很快樂的事情.....</em></p>
+<p><em>我：清交資源豐富，但我覺得希望渺茫......(陷入一段很長的沈思，我發現我說錯話了，不知道該怎麼接下去)。因為師大是師培體系...我又對教育蠻有興趣的....我覺得教學是很快樂的事情.....</em></p>
 <blockquote>
-<p>你有說到你對影像處理有興趣，為什麼？</p>
+<p>教授Ｂ：你有說到你對影像處理有興趣，為什麼？</p>
 </blockquote>
-<p><em>答：攝影是我的興趣之一，所以會很常接觸 Photshop、Lightroom 之類的軟體。選擇影像處理可以結合我兩個興趣。</em></p>
+<p><em>我：攝影是我的興趣之一，所以會很常接觸 Photshop、Lightroom 之類的軟體。選擇影像處理可以結合我兩個興趣。</em></p>
 <blockquote>
-<p>你對影像處理的了解，對你拍照時有沒有產生影響？</p>
+<p>教授Ｂ：你對影像處理的了解，對你拍照時有沒有產生影響？</p>
 </blockquote>
-<p><em>答：有。在拍照時就要考慮到在後期時可能會怎樣調整他，例如動態範圍。攝影有點像做菜，拍照其實只是在搜集食材，後期的部分還是更重要</em></p>
+<p><em>我：有。在拍照時就要考慮到在後期時可能會怎樣調整他，例如動態範圍。攝影有點像做菜，拍照其實只是在搜集食材，後期的部分還是更重要</em></p>
 <blockquote>
-<p>關於影像處理，大學之後，會有一些實作的東西。有什麼功能是你目前需要，但市面上的產品沒有辦法滿足你的？</p>
+<p>教授Ｂ：關於影像處理，大學之後，會有一些實作的東西。有什麼功能是你目前需要，但市面上的產品沒有辦法滿足你的？</p>
 </blockquote>
-<p><em>答：我可能要想一下（沈思.....。我覺得下個方向應該是結合人工智慧，去補足在物理上受到限制沒有辦法捕捉到的細節。拍照時的有些資訊其實在光學跟感光元件發展到極限之後沒辦法捕捉到，用人工智慧就可以把這些細節算出來。</em></p>
+<p><em>我：我可能要想一下（沈思.....。我覺得下個方向應該是結合人工智慧，去補足在物理上受到限制沒有辦法捕捉到的細節。拍照時的有些資訊其實在光學跟感光元件發展到極限之後沒辦法捕捉到，用人工智慧就可以把這些細節算出來。</em></p>
 <blockquote>
-<p>你有什麼問題要問的嗎？</p>
+<p>教授Ａ：你有什麼問題要問的嗎？</p>
 </blockquote>
-<p><em>問：師大的程式競賽成績很亮眼，我有問過清大其實沒有在這塊投入很多資源，不知道師大有沒有提供相關課程之類的？</em></p>
+<p><em>我：師大的程式競賽成績很亮眼，我有問過清大其實沒有在這塊投入很多資源，不知道師大有沒有提供相關課程之類的？</em></p>
 <blockquote>
-<p>我們其實沒有特別開相關的課，最重要的還是風氣。師大打競程的人非常多，我們一年只收幾十個人，但比賽能派十隊出去。演算法競賽也是很花時間的，如果你投入很多時間在打比賽，身邊的人卻都在唸書，很難堅持的下去。</p>
+<p>教授Ａ：我們其實沒有特別開相關的課，最重要的還是風氣。師大打競程的人非常多，我們一年只收幾十個人，但比賽能派十隊出去。演算法競賽也是很花時間的，如果你投入很多時間在打比賽，身邊的人卻都在唸書，很難堅持的下去。</p>
 </blockquote>
-<h4 id="心得-1">心得</h4>
-<p>這場面試完完全全只是我缺乏準備，讓我的回答既猶豫，看起來也沒有很想讀師大。</p>
-<p>師大面試體驗很棒，除了教授和工作人員人很好，面試完後系主任還一直跟我們聊天邊推銷師大，而且過程她好激動。</p>
+<h4 id="心得-2">心得</h4>
+<p><strong>這場面試完完全全只是我缺乏準備</strong>，讓我的回答既猶豫，看起來也沒有很想讀師大。</p>
+<p>師大面試體驗也很棒，除了教授和工作人員人很好，面試完後系主任還一直跟我們聊天邊推銷師大，而且過程她好激動。</p>
 <p>另外，有一個疑點：教授沒有問我演算法的專業問題。並且，其他人據說有被瘋狂推銷師大，但是我沒有QQ。不過我有聽到幾次『你如果能就讀師大對我們來說會很有幫助』，希望還是有機會能上師大。</p>
+<h3 id="中央資工">中央資工</h3>
+<p>開始面試前會坐在考生休息室裡，就像一般教室的座位一樣，一格一格的。工作人員一次從考生休息室裡帶兩名上去二樓面試。據我所知，今年和去年的面試順序都是按照初試成績排的。</p>
+<h4 id="面試過程">面試過程</h4>
+<p>面試只有一間教室，並且得先站在門口等前一個人結束。因為隔音不是很好，所以能稍微聽到前一個人在報告的聲音。在我前面一位的講話語調跟國文朗讀有同個味道，是經過幾十次練習的味道，讓我特別緊張。</p>
+<p>接著輪到我。敲門進去、跟教授打招呼、走到講台前電腦開簡報、自我介紹。中央沒有提供簡報筆，而是自己把前一天以電子郵件提供的簡報開起來，又我提供的是 pdf，沒辦法全螢幕放映，只好在筆電上捲動。這影響到了自我介紹時的流暢度。自我介紹長度為三分鐘。在我報告時，兩位教授在看資料，另一位攤在椅子上，目光多放在我的簡報。</p>
+<p>報告結束，接著輪到教授問問題：</p>
+<blockquote>
+<p>教授Ａ：你可以講一題令你印象深刻的 APCS 題目嗎？</p>
+</blockquote>
+<p><em>我：我最有印象的是上上次的 APCS 第三題。題目要求查詢區間極值和位置，不帶修改，並且查詢範圍只會變小。印象深刻的原因是我聽到的大多數人都是用資料結構解決的，但 APCS 的第三題應該不需要複雜的資料結構才對。這題我使用全國賽出現過的概念，只要事先將答案排序好，後來在判斷這個解有沒有過期就好了。</em></p>
+<blockquote>
+<p>教授Ａ：你的 APCS 是觀念五實作四嗎？</p>
+</blockquote>
+<p><em>我：我是觀念四實作五</em></p>
+<blockquote>
+<p>教授Ａ：通常都是觀念比實作高吧？</p>
+</blockquote>
+<p><em>我：透過長期的練習我的實作能力相對會比較強，並且熟悉自己風格的程式碼。相對的我對於不同邏輯的程式閱讀就會比較困難，這也是我想解決的事，因為他在教學和閱讀資料上會帶來許多不便。</em></p>
+<blockquote>
+<p>教授Ｂ：你有還有報名其他的學校嗎？</p>
+</blockquote>
+<p><em>我：有</em></p>
+<blockquote>
+<p>教授Ｂ：你有報名成大嗎</p>
+</blockquote>
+<p><em>我：有</em></p>
+<blockquote>
+<p>教授Ｂ：成大是不是要考八小時的程式？</p>
+</blockquote>
+<p><em>成大有分成甲組跟乙組，甲組是演算法競賽的考試，時長三小時；乙組考的是開發，時長八小時。我參加的是甲組。</em></p>
+<blockquote>
+<p>教授Ｂ：那你機會應該蠻大的吧，畢竟演算法是你的專長。</p>
+</blockquote>
+<p><em>我：我不太確定，因為成大的上機考我認為我表現不是令自己很滿意。</em></p>
+<blockquote>
+<p>教授Ａ：成績看起來還不錯，資訊也都接近滿分。感覺你自我介紹就講的很完整了，那就先到這裡。</p>
+</blockquote>
+<p><em>我：謝謝教授</em></p>
+<h4 id="心得-3">心得</h4>
+<p>中央的面試教授感覺不是很上心。我認為這些問題並不能讓我感受到，他們想透過面試更好的評斷要不要收這個學生（當然也可能因為我是被拿來充數的炮灰）。聽說有其他同學被問更沒有深度的問題。</p>
+<p>台南到桃園的通勤費其實也不少，讓我感覺很不值得。唯一可以慶幸的是，有拿到免洗餐具作為紀念品。</p>
 
     </div>
 
@@ -476,7 +519,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B8%E5%AF%A9"><span class="nav-number">1.</span> <span class="nav-text">書審</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E8%A9%A6"><span class="nav-number">2.</span> <span class="nav-text">面試</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%A4%A7%E8%B3%87%E5%B7%A5"><span class="nav-number">2.1.</span> <span class="nav-text">成大資工</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E5%A4%A7%E8%B3%87%E5%B7%A5"><span class="nav-number">2.2.</span> <span class="nav-text">清大資工</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%96%93%E6%95%99%E5%AE%A4"><span class="nav-number">2.2.1.</span> <span class="nav-text">第一間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%96%93%E6%95%99%E5%AE%A4"><span class="nav-number">2.2.2.</span> <span class="nav-text">第二間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E5%BE%97"><span class="nav-number">2.2.3.</span> <span class="nav-text">心得</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%AB%E5%A4%A7%E8%B3%87%E5%B7%A5"><span class="nav-number">2.3.</span> <span class="nav-text">師大資工</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%96%93%E6%95%99%E5%AE%A4-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">第一間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%96%93%E6%95%99%E5%AE%A4-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">第二間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E5%BE%97-1"><span class="nav-number">2.3.3.</span> <span class="nav-text">心得</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B8%E5%AF%A9"><span class="nav-number">1.</span> <span class="nav-text">書審</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E8%A9%A6"><span class="nav-number">2.</span> <span class="nav-text">面試</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%A4%A7%E8%B3%87%E5%B7%A5"><span class="nav-number">2.1.</span> <span class="nav-text">成大資工</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E5%BE%97"><span class="nav-number">2.1.1.</span> <span class="nav-text">心得</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E5%A4%A7%E8%B3%87%E5%B7%A5"><span class="nav-number">2.2.</span> <span class="nav-text">清大資工</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%96%93%E6%95%99%E5%AE%A4"><span class="nav-number">2.2.1.</span> <span class="nav-text">第一間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%96%93%E6%95%99%E5%AE%A4"><span class="nav-number">2.2.2.</span> <span class="nav-text">第二間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E5%BE%97-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">心得</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%AB%E5%A4%A7%E8%B3%87%E5%B7%A5"><span class="nav-number">2.3.</span> <span class="nav-text">師大資工</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%96%93%E6%95%99%E5%AE%A4-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">第一間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%96%93%E6%95%99%E5%AE%A4-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">第二間教室</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E5%BE%97-2"><span class="nav-number">2.3.3.</span> <span class="nav-text">心得</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E5%A4%AE%E8%B3%87%E5%B7%A5"><span class="nav-number">2.4.</span> <span class="nav-text">中央資工</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E8%A9%A6%E9%81%8E%E7%A8%8B"><span class="nav-number">2.4.1.</span> <span class="nav-text">面試過程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E5%BE%97-3"><span class="nav-number">2.4.2.</span> <span class="nav-text">心得</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -492,14 +535,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -532,7 +575,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
