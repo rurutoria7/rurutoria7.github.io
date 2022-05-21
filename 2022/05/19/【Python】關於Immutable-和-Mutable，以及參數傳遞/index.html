@@ -28,8 +28,14 @@
 <meta property="og:description" content="剛接觸到 Python 時，很可能會遇到類似靈異現象： 12345678910&gt;&gt;&gt; a &#x3D; []&gt;&gt;&gt; b &#x3D; a&gt;&gt;&gt; b.append(1)&gt;&gt;&gt; a[1]&gt;&gt;&gt; a &#x3D; 1&gt;&gt;&gt; b &#x3D; a&gt;&gt;&gt; b +&#x3D; 1&gt;&gt;&gt; a1 又或者，對於 Pytho">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2022-05-19T12:08:14.000Z">
-<meta property="article:modified_time" content="2022-05-20T06:28:57.337Z">
+<meta property="article:modified_time" content="2022-05-21T07:34:22.669Z">
 <meta property="article:author" content="rurutoria7">
+<meta property="article:tag" content="開發">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Mutability">
+<meta property="article:tag" content="作用域">
+<meta property="article:tag" content="命名空間">
+<meta property="article:tag" content="閉包">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://rurutoria7.github.io/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/">
@@ -191,7 +197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-05-20 14:28:57" itemprop="dateModified" datetime="2022-05-20T14:28:57+08:00">2022-05-20</time>
+                <time title="修改時間：2022-05-21 15:34:22" itemprop="dateModified" datetime="2022-05-21T15:34:22+08:00">2022-05-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -219,7 +225,7 @@
 <h2 id="python-的變數是什麼">Python 的變數是什麼？</h2>
 <p>首先來談最基本的問題：Python 的變數是什麼？這個問題並非你想像的理所當然。</p>
 <p>在我們熟悉的語言如 C++ 裡，宣告變數，等同配置了一段記憶體，用以儲存資訊。在引用該段變數時，不管是讀取、修改、賦值，相當於在操作這段記憶體內的資料。也就是說在 C++ 裡，變數是某段記憶體的別名；這也說明了為什麼 C++ 需要你給出型別才能宣告，否則電腦根本不知道該配置多少記憶體給這個變數。</p>
-<p>而在 Python 裡，變數僅是從「名稱」到「物件」的映射。在 Python 裡對一個變數賦值，代表了你將這個名稱「指向」到某個物件上。因此，在 Python 裡變數沒有型別。你可以隨時隨地將一個名稱指向至另一個物件。</p>
+<p>在 Python 裡，任何東西都是物件，而變數僅是從「名稱」到「物件」的映射。在 Python 裡對一個變數賦值，代表了你將這個名稱「指向」到某個物件上。因此，在 Python 裡變數沒有型別。你可以隨時隨地將一個名稱指向至另一個物件。</p>
 <p>為了方便示例，這裡介紹 <code>id</code> 和 <code>is</code>。<code>id(foo)</code> 會將傳入變數所指向的物件的 <code>id</code> （可當作記憶體位址）印出來。而 <code>a is b</code> 會比較兩者所指向的物件，是否為同一實體，也就是 <code>id(a) == id(b)</code>。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">id</span>(a)</span><br><span class="line"><span class="number">4351113008</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a <span class="keyword">is</span> a</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
 <h3 id="對一個變數你可以做的事情包含">對一個變數，你可以做的事情包含：</h3>
@@ -227,7 +233,7 @@
 <p>讀取和修改的行為，都算是引用。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">2</span></span><br><span class="line">b = <span class="number">3</span></span><br><span class="line"><span class="built_in">print</span>(a+b)  <span class="comment"># 引用 a 和 b</span></span><br><span class="line"></span><br><span class="line">owo = []</span><br><span class="line">owo.append(<span class="number">1</span>)   <span class="comment"># 引用 owo</span></span><br></pre></td></tr></table></figure>
 <h4 id="指向至一個物件上賦值">2. 指向至一個物件上（賦值）</h4>
-<p><code>=</code> 運算子做的就是賦值。<code>=</code> 將一個名稱指向一個物件。如果指定的命名空間不存在這個名稱，那 Python 會創建一個新的。</p>
+<p><code>=</code> 運算子做的就是賦值。<code>=</code> 將一個名稱指向一個物件。如果指定的命名空間不存在這個名稱，那 Python 會創建一個新的。（命名空間為名稱的集合）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">owo = []    <span class="comment"># 將 owo 賦值</span></span><br><span class="line">owo.append(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">a = <span class="number">2</span>   <span class="comment"># 將 a 賦值</span></span><br><span class="line">a = a+<span class="number">2</span> <span class="comment"># 將 a 賦值，右邊 a+2 引用 a</span></span><br><span class="line"><span class="built_in">print</span>(a) </span><br></pre></td></tr></table></figure>
 <p>如果用變數將另一個變數賦值，則兩個變數會指向同一個物件：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a <span class="keyword">is</span> b</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
@@ -257,14 +263,19 @@
 <h3 id="global-和-nonlocal-關鍵字">global 和 nonlocal 關鍵字。</h3>
 <p>解法很簡單。<code>global</code> 語句宣告了該名稱位於全域，Python 不需要在苦苦搜尋該名稱。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span>():</span></span><br><span class="line"><span class="meta">... </span>    <span class="keyword">global</span> a</span><br><span class="line"><span class="meta">... </span>    a = <span class="number">1</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p><code>nonlocal</code> 語句宣告該名稱不在 <code>local</code> 和 <code>global</code> 裡。由於 <code>nonlocal</code> 作用域可能有很多個，使用 <code>nonlocal</code> 需要明確的指出該名稱位於哪一層作用域，只能對預先存在的名稱做 <code>nonlocal</code> 宣告。</p>
+<p><code>nonlocal</code> 語句宣告該名稱不在 <code>local</code> 和 <code>global</code> 裡。由於作用域覆蓋當前的 <code>nonlocal</code> 命名空間可能有很多個，使用 <code>nonlocal</code> 需要明確的指出該名稱位於哪一個命名空間，只能對預先存在的名稱做 <code>nonlocal</code> 宣告。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    a = <span class="number">2</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="keyword">nonlocal</span> a</span><br><span class="line"><span class="meta">... </span>            a += <span class="number">1</span></span><br><span class="line"><span class="meta">... </span>    inner()</span><br><span class="line"><span class="meta">... </span>    <span class="built_in">print</span>(a)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>outer()</span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="keyword">nonlocal</span> qwq    <span class="comment"># 只能對預先存在的名稱做 nonlocal 宣告</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">3</span></span><br><span class="line">SyntaxError: no binding <span class="keyword">for</span> <span class="keyword">nonlocal</span> <span class="string">&#x27;qwq&#x27;</span> found</span><br></pre></td></tr></table></figure>
 <h2 id="python-的參數傳遞">Python 的參數傳遞</h2>
-<p>Python 的參數傳遞，相當於做了一次賦值。將變數作為容器的語言中，有 call by reference 或 call by value 的概念，在 Python 中是沒有的。</p>
+<p>Python 的參數傳遞，相當於做了一次賦值。將變數作為容器的語言中，有 call by reference 或 call by value 的概念，在 Python 中則沒有。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">x</span>):</span></span><br><span class="line"><span class="meta">... </span>    x += <span class="number">1</span>      <span class="comment"># 賦值</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add(a)   <span class="comment"># 相當於 x = a</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">ap</span>(<span class="params">x</span>):</span></span><br><span class="line"><span class="meta">... </span>    x.append(<span class="number">1</span>)     <span class="comment"># 引用</span></span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ap(b)   <span class="comment"># 相當於 x = b</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b</span><br><span class="line">[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
 <h2 id="為什麼需要有-immutable-objects">為什麼需要有 Immutable Objects?</h2>
-<p>Immutable Objects 有以下優點，但我現在還沒體會必要性： - 保證一但被創建出來 hash 值就不會改變，才能做為 hash table 的 key - 唯讀保證了多線程安全 - Python 的機制使多個變數會指向同一個物件，不變性保證了每個變數參考到的物件始終相同</p>
+<p>Immutable Objects 有以下優點，但我現在還沒體會必要性：</p>
+<ul>
+<li><p>保證一但被創建出來 hash 值就不會改變，才能做為 hash table 的 key</p></li>
+<li><p>唯讀保證了多線程安全</p></li>
+<li><p>Python 的機制使多個變數會指向同一個物件，不變性保證了每個變數參考到的物件始終相同</p></li>
+</ul>
 
     </div>
 
@@ -273,6 +284,14 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%96%8B%E7%99%BC/" rel="tag"># 開發</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/Mutability/" rel="tag"># Mutability</a>
+              <a href="/tags/%E4%BD%9C%E7%94%A8%E5%9F%9F/" rel="tag"># 作用域</a>
+              <a href="/tags/%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93/" rel="tag"># 命名空間</a>
+              <a href="/tags/%E9%96%89%E5%8C%85/" rel="tag"># 閉包</a>
+          </div>
 
         
 
@@ -283,7 +302,10 @@
     <a href="/2021/12/06/%E3%80%90%E5%BF%83%E5%BE%97%E3%80%91%E6%96%B0%E7%AB%B9%E9%81%8A%E8%A8%98/" rel="prev" title="【心得】新竹遊記">
       <i class="fa fa-chevron-left"></i> 【心得】新竹遊記
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/21/%E3%80%90Python%E3%80%91%E9%96%89%E5%8C%85%EF%BC%88Closure%EF%BC%89/" rel="next" title="【Python】閉包（Closure）">
+      【Python】閉包（Closure） <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -358,20 +380,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

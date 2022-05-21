@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rurutoria7.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。 但只要理解以下 Python 的規則，閉包也能很好理解。 一、函數結束時區域變數不會直接被回收，而是等到無人參考。 實際上，被參考的外層變數會被綁到內層變數的 __closure__ 上。這個特性讓我們可以有閉包這">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Python】閉包（Closure）">
+<meta property="og:url" content="https://rurutoria7.github.io/2022/05/21/%E3%80%90Python%E3%80%91%E9%96%89%E5%8C%85%EF%BC%88Closure%EF%BC%89/index.html">
+<meta property="og:site_name" content="總有一天會用到的筆記">
+<meta property="og:description" content="由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。 但只要理解以下 Python 的規則，閉包也能很好理解。 一、函數結束時區域變數不會直接被回收，而是等到無人參考。 實際上，被參考的外層變數會被綁到內層變數的 __closure__ 上。這個特性讓我們可以有閉包這">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-05-21T00:32:06.000Z">
+<meta property="article:modified_time" content="2022-05-21T08:36:49.604Z">
+<meta property="article:author" content="rurutoria7">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rurutoria7.github.io/2022/05/21/%E3%80%90Python%E3%80%91%E9%96%89%E5%8C%85%EF%BC%88Closure%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>【Python】閉包（Closure） | 總有一天會用到的筆記</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">總有一天會用到的筆記</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">本站為減緩筆者下列疑難雜症誕生：記性很差，學過就忘；智商低落，囫圇吞棗。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2022/05/21/%E3%80%90Python%E3%80%91%E9%96%89%E5%8C%85%EF%BC%88Closure%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Python】閉包（Closure）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+              
+
+              <time title="創建時間：2022-05-21 08:32:06 / 修改時間：16:36:49" itemprop="dateCreated datePublished" datetime="2022-05-21T08:32:06+08:00">2022-05-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E4%BD%9C%E7%94%A8%E5%9F%9F/" itemprop="url" rel="index"><span itemprop="name">作用域</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E4%BD%9C%E7%94%A8%E5%9F%9F/%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93/" itemprop="url" rel="index"><span itemprop="name">命名空間</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E4%BD%9C%E7%94%A8%E5%9F%9F/%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93/%E9%96%89%E5%8C%85/" itemprop="url" rel="index"><span itemprop="name">閉包</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E4%BD%9C%E7%94%A8%E5%9F%9F/%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93/%E9%96%89%E5%8C%85/%E9%96%8B%E7%99%BC/" itemprop="url" rel="index"><span itemprop="name">開發</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。</p>
+<p>但只要理解以下 Python 的規則，閉包也能很好理解。</p>
+<p><strong><em>一、函數結束時區域變數不會直接被回收，而是等到無人參考。</em></strong></p>
+<p>實際上，被參考的外層變數會被綁到內層變數的 <code>__closure__</code> 上。這個特性讓我們可以有閉包這種酷酷的操作。</p>
+<p><strong><em>二、呼叫函式時，會創造出一個命名空間</em></strong></p>
+<p>執行 outer 而產生一個命名空間。而因為 inner 參考至它，所以 outer 的命名空間不會被回收掉。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    owo = <span class="number">1</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>        <span class="built_in">print</span>(owo)</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> inner</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = outer()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func()</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>每次執行函式，都會創造出一個全新的命名空間。這裡要用 <code>nonlocal</code> 是因為，除非加上 <code>nonlocal</code> 關鍵字，外部名稱是唯讀的。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    cnt = <span class="number">0</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">nonlocal</span> cnt</span><br><span class="line"><span class="meta">... </span>        cnt += <span class="number">1</span></span><br><span class="line"><span class="meta">... </span>        <span class="built_in">print</span>(cnt)</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> inner</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f1 = outer()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f2 = outer()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f1(), f1(), f1(), f2(), f2(), f2()</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure></p>
+<p><strong><em>三、作用域是在哪裡 <code>def</code> 決定的，而非在哪裡被呼叫</em></strong></p>
+<p>作用域和搜尋順序關乎於寫在哪裡，而非在哪裡被呼叫：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>owo = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    owo = <span class="string">&#x27;mothersrosario&#x27;</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>        <span class="built_in">print</span>(owo)</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> inner</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = outer()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func()</span><br><span class="line">mothersrosario</span><br></pre></td></tr></table></figure>
+<h3 id="section"></h3>
+<p><strong><em>四、呼叫函數時，會參考至當前時間的命名空間，和宣告時沒關係。</em></strong></p>
+<p>呼叫 <code>f()</code> 時，該函數會以當前的命名空間狀態為主。此時執行完 <code>for</code> 迴圈，名稱 <code>i</code> 在全域中指向 <code>2</code>，因此函數參考外部名稱 <code>i</code> 時會讀取到 <code>2</code>。</p>
+<p>注意，Python 的迴圈沒有獨立的命名空間，<code>for i in range(3)</code> 在全域新增了名稱 <code>i</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>func_list = []</span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line"><span class="meta">... </span>        <span class="built_in">print</span>(i)</span><br><span class="line"><span class="meta">... </span>    func_list.append(show)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> f <span class="keyword">in</span> func_list:</span><br><span class="line"><span class="meta">... </span>    f()</span><br><span class="line">...</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>解決辦法是在外部再包一層函數。利用迴圈執行 <code>outer</code>，製造出許多獨立的命名空間。每個命名空間裡都會有自己的名稱 <code>j</code>，分別指向物件 <code>0</code>、<code>1</code>、<code>2</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>func_list = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>        j = i</span><br><span class="line"><span class="meta">... </span>        <span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="built_in">print</span>(j)</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> show</span><br><span class="line"><span class="meta">... </span>    func_list.append(outer())</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> f <span class="keyword">in</span> func_list:</span><br><span class="line"><span class="meta">... </span>    f()</span><br><span class="line">...</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>寫成參數有相同療效：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>func_list = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">outer</span>(<span class="params">j</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="built_in">print</span>(j)</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> show</span><br><span class="line"><span class="meta">... </span>    func_list.append(outer(i))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> f <span class="keyword">in</span> func_list:</span><br><span class="line"><span class="meta">... </span>    f()</span><br><span class="line">...</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>另外這裡有一個雷點，以下的程式碼看似可以正常的運作，其實是誤打誤撞：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>func_list = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="built_in">print</span>(i)</span><br><span class="line"><span class="meta">... </span>    func_list.append(show)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    func_list[i]()</span><br><span class="line">...</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>由於使用了 <code>for</code>，<code>i</code> 在每次迴圈被指向 <code>0</code>、<code>1</code>、<code>2</code>，而執行 <code>func_list[i]()</code> 時，函數又會參考至當前的命名空間，造成了這樣的笑話。若把下面的迴圈改成 <code>j</code>，就會印出 <code>2 2 2</code> 了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/" rel="prev" title="【Python】關於Immutable 和 Mutable，以及參數傳遞">
+      <i class="fa fa-chevron-left"></i> 【Python】關於Immutable 和 Mutable，以及參數傳遞
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/21/%E3%80%90Python%E3%80%91Tkinter-%E5%92%8C-MVC-%E6%9E%B6%E6%A7%8B/" rel="next" title="【Python】Tkinter 和 MVC 架構">
+      【Python】Tkinter 和 MVC 架構 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#section"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="rurutoria7"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">rurutoria7</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rurutoria7</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
