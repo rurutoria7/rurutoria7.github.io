@@ -20,21 +20,21 @@
     var CONFIG = {"hostname":"rurutoria7.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。 但只要理解以下 Python 的規則，閉包也能很好理解。 一、函數結束時區域變數不會直接被回收，而是等到無人參考。 實際上，被參考的外層變數會被綁到內層變數的 __closure__ 上。這個特性讓我們可以有閉包這">
+  <meta name="description" content="由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。 但只要理解以下 Python 的原理，閉包也能很好理解。 四個原理及示例 一、函數結束時區域變數不會直接被回收，而是等到無人參考。 實際上，被參考的外層變數會被綁到內層變數的 __closure__ 上。這個特性讓">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Python】閉包（Closure）">
 <meta property="og:url" content="https://rurutoria7.github.io/2022/05/21/%E3%80%90Python%E3%80%91%E9%96%89%E5%8C%85%EF%BC%88Closure%EF%BC%89/index.html">
 <meta property="og:site_name" content="總有一天會用到的筆記">
-<meta property="og:description" content="由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。 但只要理解以下 Python 的規則，閉包也能很好理解。 一、函數結束時區域變數不會直接被回收，而是等到無人參考。 實際上，被參考的外層變數會被綁到內層變數的 __closure__ 上。這個特性讓我們可以有閉包這">
+<meta property="og:description" content="由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。 但只要理解以下 Python 的原理，閉包也能很好理解。 四個原理及示例 一、函數結束時區域變數不會直接被回收，而是等到無人參考。 實際上，被參考的外層變數會被綁到內層變數的 __closure__ 上。這個特性讓">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2022-05-21T00:32:06.000Z">
-<meta property="article:modified_time" content="2022-05-21T13:40:58.098Z">
+<meta property="article:modified_time" content="2022-05-22T00:11:17.165Z">
 <meta property="article:author" content="rurutoria7">
+<meta property="article:tag" content="開發">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="作用域">
 <meta property="article:tag" content="命名空間">
 <meta property="article:tag" content="閉包">
-<meta property="article:tag" content="開發">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://rurutoria7.github.io/2022/05/21/%E3%80%90Python%E3%80%91%E9%96%89%E5%8C%85%EF%BC%88Closure%EF%BC%89/">
@@ -188,10 +188,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">發表於</span>
-              
 
-              <time title="創建時間：2022-05-21 08:32:06 / 修改時間：21:40:58" itemprop="dateCreated datePublished" datetime="2022-05-21T08:32:06+08:00">2022-05-21</time>
+              <time title="創建時間：2022-05-21 08:32:06" itemprop="dateCreated datePublished" datetime="2022-05-21T08:32:06+08:00">2022-05-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2022-05-22 08:11:17" itemprop="dateModified" datetime="2022-05-22T08:11:17+08:00">2022-05-22</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -214,7 +220,8 @@
 
       
         <p>由於 Python 中的函數也是物件，因此常常會出現在函數內定義函數、回傳函數的情形。若此時內部函數引用外部函數的區域變數，情況就會變得些微複雜，我們稱之為「閉包（Closure）」。</p>
-<p>但只要理解以下 Python 的規則，閉包也能很好理解。</p>
+<p>但只要理解以下 Python 的原理，閉包也能很好理解。</p>
+<h2 id="四個原理及示例">四個原理及示例</h2>
 <p><strong><em>一、函數結束時區域變數不會直接被回收，而是等到無人參考。</em></strong></p>
 <p>實際上，被參考的外層變數會被綁到內層變數的 <code>__closure__</code> 上。這個特性讓我們可以有閉包這種酷酷的操作。</p>
 <p><strong><em>二、呼叫函式時，會創造出一個命名空間</em></strong></p>
@@ -235,6 +242,14 @@
 <p>另外這裡有一個雷點，以下的程式碼看似可以正常的運作，其實是誤打誤撞：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>func_list = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="built_in">print</span>(i)</span><br><span class="line"><span class="meta">... </span>    func_list.append(show)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line"><span class="meta">... </span>    func_list[i]()</span><br><span class="line">...</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
 <p>由於使用了 <code>for</code>，<code>i</code> 在每次迴圈被指向 <code>0</code>、<code>1</code>、<code>2</code>，而執行 <code>func_list[i]()</code> 時，函數又會參考至當前的命名空間，造成了這樣的笑話。若把下面的迴圈改成 <code>j</code>，就會印出 <code>2 2 2</code> 了。</p>
+<h2 id="應用">應用</h2>
+<p>這項技巧經常用在</p>
+<ul>
+<li>批量產生函數，如按鈕的 handler</li>
+<li>裝飾器（Decorator）</li>
+</ul>
+<p>以帶參數的裝飾器做示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">deco_fac</span>(<span class="params">message</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">deco</span>(<span class="params">func</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="function"><span class="keyword">def</span> <span class="title">res</span>():</span></span><br><span class="line"><span class="meta">... </span>            <span class="built_in">print</span>(message)</span><br><span class="line"><span class="meta">... </span>            func()</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> res</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> deco</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>@deco_fac(<span class="string">&quot;starbuststream&quot;</span>)     <span class="comment"># 呼叫 deco_fac 會回傳 decorator</span></span><br><span class="line"><span class="meta">... </span><span class="function"><span class="keyword">def</span> <span class="title">owo</span>():</span></span><br><span class="line"><span class="meta">... </span>    <span class="built_in">print</span>(<span class="string">&quot;kirito&quot;</span>)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>owo()</span><br><span class="line">starbuststream</span><br><span class="line">kirito</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -244,11 +259,11 @@
 
       <footer class="post-footer">
           <div class="post-tags">
+              <a href="/tags/%E9%96%8B%E7%99%BC/" rel="tag"># 開發</a>
               <a href="/tags/Python/" rel="tag"># Python</a>
               <a href="/tags/%E4%BD%9C%E7%94%A8%E5%9F%9F/" rel="tag"># 作用域</a>
               <a href="/tags/%E5%91%BD%E5%90%8D%E7%A9%BA%E9%96%93/" rel="tag"># 命名空間</a>
               <a href="/tags/%E9%96%89%E5%8C%85/" rel="tag"># 閉包</a>
-              <a href="/tags/%E9%96%8B%E7%99%BC/" rel="tag"># 開發</a>
           </div>
 
         
@@ -257,8 +272,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/" rel="prev" title="【Python】關於Immutable 和 Mutable，以及參數傳遞">
-      <i class="fa fa-chevron-left"></i> 【Python】關於Immutable 和 Mutable，以及參數傳遞
+    <a href="/2022/05/19/%E3%80%90Python%E3%80%91%E9%97%9C%E6%96%BCImmutable-%E5%92%8C-Mutable%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%8F%83%E6%95%B8%E5%82%B3%E9%81%9E/" rel="prev" title="【Python】關於 Immutable 和 Mutable，以及參數傳遞">
+      <i class="fa fa-chevron-left"></i> 【Python】關於 Immutable 和 Mutable，以及參數傳遞
     </a></div>
       <div class="post-nav-item">
     <a href="/2022/05/21/%E3%80%90Python%E3%80%91Tkinter-%E5%92%8C-MVC-%E6%9E%B6%E6%A7%8B/" rel="next" title="【Python】Tkinter 和 MVC 架構">
@@ -322,7 +337,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#section"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%80%8B%E5%8E%9F%E7%90%86%E5%8F%8A%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">四個原理及示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#section"><span class="nav-number">1.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%87%89%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">應用</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
