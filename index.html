@@ -156,6 +156,96 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2022/07/12/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91JOI18-commuter-pass/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="rurutoria7">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="總有一天會用到的筆記">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/12/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91JOI18-commuter-pass/" class="post-title-link" itemprop="url">【題解】JOI18 commuter pass</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+              
+
+              <time title="創建時間：2022-07-12 11:21:53 / 修改時間：12:28:53" itemprop="dateCreated datePublished" datetime="2022-07-12T11:21:53+08:00">2022-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AB%B6%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">競程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="題意">題意</h2>
+<blockquote>
+<p>有 <span class="math inline">\(n\)</span> 點 <span class="math inline">\(m\)</span> 邊的帶權無向圖（<span class="math inline">\(n\le 10^5; m \le 2\times10^5\)</span>）。你可以指定一條 <span class="math inline">\(s-t\)</span> 的最短路使其邊權歸零，求 <span class="math inline">\(u-v\)</span> 的最短路徑。</p>
+</blockquote>
+<h2 id="作法">作法</h2>
+<p>將無向圖拆成有向圖，可以得到 <span class="math inline">\(stDAG\)</span> 的任何完整路徑（從入度為零的點開始，走到出度為零的點為止）都是 <span class="math inline">\(s-t\)</span> 最短路。</p>
+<p><span class="math inline">\(u-v\)</span> 最短路有兩種可能：</p>
+<ol type="1">
+<li>不經過 <span class="math inline">\(s-t\)</span> 最短路，<span class="math inline">\(ans = dis(u,v)\)</span></li>
+<li><span class="math inline">\(u\)</span> 從 <span class="math inline">\(x\)</span> 接入 <span class="math inline">\(stDAG\)</span>，從 <span class="math inline">\(y\)</span> 離開 <span class="math inline">\(stDAG\)</span> 前往 <span class="math inline">\(v\)</span>，<span class="math inline">\(ans = dis(u,x)+dis(y,v)\)</span></li>
+<li><span class="math inline">\(v\)</span> 從 <span class="math inline">\(x\)</span> 接入 <span class="math inline">\(stDAG\)</span>，從 <span class="math inline">\(y\)</span> 離開 <span class="math inline">\(stDAG\)</span> 前往 <span class="math inline">\(u\)</span>，<span class="math inline">\(ans = dis(v,x)+dis(y,u)\)</span></li>
+</ol>
+<p>找出 <span class="math inline">\(dis(v,x)\)</span> 和 <span class="math inline">\(dis(y,u)\)</span> 只要從 <span class="math inline">\(u,v\)</span> 分別作 Dijkstra 即可。</p>
+<h3 id="如何找到-x-y">如何找到 <span class="math inline">\(x, y\)</span> ?</h3>
+<p>考慮在 <span class="math inline">\(stDAG\)</span> 上 DP： * <span class="math inline">\(dpu[i]\)</span> 代表 <span class="math inline">\(path(s,i)\)</span> 上最小的 <span class="math inline">\(dis(u,i)\)</span> * <span class="math inline">\(dpv[i]\)</span> 代表 <span class="math inline">\(path(s,i)\)</span> 上最小的 <span class="math inline">\(dis(v,i)\)</span></p>
+<p>則將 <span class="math inline">\(i\)</span> 作為 <span class="math inline">\(y\)</span> 的答案即為 <span class="math inline">\(min(dpu[prev]+dis(v,i), dpv[prev]+dis(u,i))\)</span>。</p>
+<h3 id="如何在-stdag-上-dp">如何在 <span class="math inline">\(stDAG\)</span> 上 DP？</h3>
+<p><strong>對於正邊權圖，只要維護 <span class="math inline">\(vis\)</span> 使得每個點只會被拿出來一次，Dijkstra 拿出來的順序就是在單源最短路 DAG 上的拓樸排序。</strong></p>
+<p>因此我們可以從 <span class="math inline">\(s\)</span> 做一次 Dijkstra ，在 <span class="math inline">\(sDAG\)</span> 上得到 <span class="math inline">\(dpu\)</span> 和 <span class="math inline">\(dpv\)</span>。</p>
+<p>若我們在 <span class="math inline">\(sDAG\)</span> 的反圖 <span class="math inline">\(sDAG&#39;\)</span> 上從 <span class="math inline">\(t\)</span> 做 BFS 可以得到 <span class="math inline">\(tsDAG\)</span>。此時的前驅 <span class="math inline">\(i\)</span> 就會是 <span class="math inline">\(y\)</span>，後繼 <span class="math inline">\(j\)</span> 就會是 <span class="math inline">\(x\)</span>，套用前面方法求 <span class="math inline">\(ans\)</span> 即可。</p>
+<p>BFS 不用另外寫，直接和 Dijkstra 合併即可（被拿出來的順序不重要）。</p>
+<h2 id="ac-code">AC Code</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> int long long</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> rep(i,j,k) for (int i=j; i&lt;=k; i++)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> pb push_back</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> lyx_my_wife ios::sync_with_stdio(0), cin.tie(0);</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">typedef</span> pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; pii;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1e5</span>+<span class="number">10</span>, M = <span class="number">2e5</span>+<span class="number">10</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> n, m, s, t, u, v;</span><br><span class="line">vector&lt;pii&gt; G[N];</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> disu[N], disv[N], diss[N], dist[N], vis[N];</span><br><span class="line"><span class="keyword">int</span> dpu[N], dpv[N], ans;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dijks</span><span class="params">(<span class="keyword">int</span> rt, <span class="keyword">int</span> dis[N], <span class="keyword">int</span> fordp=<span class="number">0</span>, <span class="keyword">int</span> forans=<span class="number">0</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">memset</span>(dis, <span class="number">0x3f</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(disu));</span><br><span class="line">    <span class="built_in">memset</span>(vis, <span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(vis));</span><br><span class="line">    priority_queue&lt;pii, vector&lt;pii&gt;, greater&lt;pii&gt;&gt; pq;</span><br><span class="line">    dis[rt] = <span class="number">0</span>;</span><br><span class="line">    pq.<span class="built_in">push</span>(&#123;<span class="number">0</span>, rt&#125;);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (fordp)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">memset</span>(dpu, <span class="number">0x3f</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(dpu));</span><br><span class="line">        <span class="built_in">memset</span>(dpv, <span class="number">0x3f</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(dpv));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(pq.<span class="built_in">size</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> i = pq.<span class="built_in">top</span>().ss, d = pq.<span class="built_in">top</span>().ff;</span><br><span class="line">        pq.<span class="built_in">pop</span>(); </span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (vis[i]) <span class="keyword">continue</span>;</span><br><span class="line">        vis[i] = <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (fordp)</span><br><span class="line">        &#123;</span><br><span class="line">            dpu[i] = <span class="built_in">min</span>(dpu[i], disu[i]);</span><br><span class="line">            dpv[i] = <span class="built_in">min</span>(dpv[i], disv[i]);            </span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> e: G[i])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> j = e.ss, w = e.ff;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> (forans)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (diss[j] != diss[i]-w) <span class="keyword">continue</span>;</span><br><span class="line">                ans = <span class="built_in">min</span>(ans, dpu[j]+disv[i]);</span><br><span class="line">                ans = <span class="built_in">min</span>(ans, dpv[j]+disu[i]);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> (dis[j] &gt; d+w)</span><br><span class="line">            &#123;</span><br><span class="line">                dis[j] = d+w;</span><br><span class="line">                pq.<span class="built_in">push</span>(&#123;dis[j], j&#125;);</span><br><span class="line">                <span class="keyword">if</span> (fordp) dpu[j] = dpu[i], dpv[j] = dpv[i];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (dis[j] == d+w)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (fordp) dpu[j] = <span class="built_in">min</span>(dpu[j], dpu[i]), dpv[j] = <span class="built_in">min</span>(dpv[j], dpv[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">signed</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    lyx_my_wife</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m &gt;&gt; s &gt;&gt; t &gt;&gt; u &gt;&gt; v;</span><br><span class="line">    <span class="built_in">rep</span>(_,<span class="number">1</span>,m)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> i, j, w;</span><br><span class="line">        cin &gt;&gt; i &gt;&gt; j &gt;&gt; w;</span><br><span class="line">        G[i].<span class="built_in">pb</span>(&#123;w,j&#125;);</span><br><span class="line">        G[j].<span class="built_in">pb</span>(&#123;w,i&#125;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">dijks</span>(u,disu);</span><br><span class="line">    <span class="built_in">dijks</span>(v,disv);</span><br><span class="line">    <span class="built_in">dijks</span>(s,diss,<span class="number">1</span>);</span><br><span class="line">    ans = disu[v];</span><br><span class="line">    <span class="built_in">dijks</span>(t,dist,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    cout &lt;&lt; ans &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2022/05/21/%E3%80%90Python%E3%80%91Tkinter-%E5%92%8C-MVC-%E6%9E%B6%E6%A7%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -327,7 +417,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-05-22 08:11:17" itemprop="dateModified" datetime="2022-05-22T08:11:17+08:00">2022-05-22</time>
+                <time title="修改時間：2022-05-22 08:51:54" itemprop="dateModified" datetime="2022-05-22T08:51:54+08:00">2022-05-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -361,7 +451,6 @@
 <p><strong><em>三、作用域是在哪裡 <code>def</code> 決定的，而非在哪裡被呼叫</em></strong></p>
 <p>作用域和搜尋順序關乎於寫在哪裡，而非在哪裡被呼叫：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>owo = <span class="string">&#x27;starbuststream&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">outer</span>():</span></span><br><span class="line"><span class="meta">... </span>    owo = <span class="string">&#x27;mothersrosario&#x27;</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line"><span class="meta">... </span>        <span class="built_in">print</span>(owo)</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> inner</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = outer()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func()</span><br><span class="line">mothersrosario</span><br></pre></td></tr></table></figure>
-<h3 id="section"></h3>
 <p><strong><em>四、呼叫函數時，會參考至當前時間的命名空間，和宣告時沒關係。</em></strong></p>
 <p>呼叫 <code>f()</code> 時，該函數會以當前的命名空間狀態為主。此時執行完 <code>for</code> 迴圈，名稱 <code>i</code> 在全域中指向 <code>2</code>，因此函數參考外部名稱 <code>i</code> 時會讀取到 <code>2</code>。</p>
 <p>注意，Python 的迴圈沒有獨立的命名空間，<code>for i in range(3)</code> 在全域新增了名稱 <code>i</code>。</p>
@@ -1231,66 +1320,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://rurutoria7.github.io/2021/11/16/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91CSES-1680-Longest-Flight-Route/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="rurutoria7">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="總有一天會用到的筆記">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/16/%E3%80%90%E9%A1%8C%E8%A7%A3%E3%80%91CSES-1680-Longest-Flight-Route/" class="post-title-link" itemprop="url">【題解】CSES 1680. Longest Flight Route</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2021-11-16 21:20:09" itemprop="dateCreated datePublished" datetime="2021-11-16T21:20:09+08:00">2021-11-16</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>本篇尚在施工中...</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1362,7 +1391,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1375,7 +1404,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
